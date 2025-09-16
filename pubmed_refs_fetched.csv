@@ -1,0 +1,209 @@
+Dataset,PMID,Title,Journal,Year
+UK Biobank,38198570,Prospective study design and data analysis in UK Biobank.,Science translational medicine,2024
+UK Biobank,37675869,Association between metabolic syndrome and risk of incident dementia in UK Biobank.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2024
+UK Biobank,39278973,"A metabolomic profile of biological aging in 250,341 individuals from the UK Biobank.",Nature communications,2024
+ADNI,37698424,The Alzheimer's Disease Neuroimaging Initiative in the era of Alzheimer's disease treatment: A review of ADNI studies from 2021 to 2022.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2024
+ADNI,39140398,The informatics of ADNI.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2024
+ADNI,39258539,Overview of ADNI MRI.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2024
+NACC,35041578,The Neurostimulation Appropriateness Consensus Committee (NACC): Recommendations for Surgical Technique for Spinal Cord Stimulation.,Neuromodulation : journal of the International Neuromodulation Society,2022
+NACC,32091103,NACC-1 regulates hepatocellular carcinoma cell malignancy and is targeted by miR-760.,Acta biochimica et biophysica Sinica,2020
+NACC,17804958,The National Alzheimer's Coordinating Center (NACC) database: the Uniform Data Set.,Alzheimer disease and associated disorders,2007
+ROSMAP,39351424,The ROSMAP project: aging and neurodegenerative diseases through omic sciences.,Frontiers in neuroinformatics,2024
+ROSMAP,36385530,Medin co-aggregates with vascular amyloid-β in Alzheimer's disease.,Nature,2022
+ROSMAP,38714706,Metabolic phenotyping reveals an emerging role of ammonia abnormality in Alzheimer's disease.,Nature communications,2024
+ARIC,37254192,APSIC guide for prevention of catheter associated urinary tract infections (CAUTIs).,Antimicrobial resistance and infection control,2023
+ARIC,31131107,Antibiotics versus biofilm: an emerging battleground in microbial communities.,Antimicrobial resistance and infection control,2019
+ARIC,31749962,APSIC guidelines for the prevention of surgical site infections.,Antimicrobial resistance and infection control,2019
+BIOCARD,33397713,ESGO/ESTRO/ESP guidelines for the management of patients with endometrial carcinoma.,International journal of gynecological cancer : official journal of the International Gynecological Cancer Society,2021
+BIOCARD,35262657,"Characterizing Heterogeneity in Neuroimaging, Cognition, Clinical Symptoms, and Genetics Among Patients With Late-Life Depression.",JAMA psychiatry,2022
+BIOCARD,28968586,Cognitive reserve and long-term change in cognition in aging and preclinical Alzheimer's disease.,Neurobiology of aging,2017
+HABS,38068573,Review of Harmful Algal Blooms (HABs) Causing Marine Fish Kills: Toxicity and Mitigation.,"Plants (Basel, Switzerland)",2023
+HABS,32383649,Biotic control of harmful algal blooms (HABs): A brief review.,Journal of environmental management,2020
+HABS,37119149,HABs Karenia brevis and Pseudo-nitzschia pre- and post-Hurricane Michael.,Journal of water and health,2023
+OASIS,39172446,Elinzanetant for the Treatment of Vasomotor Symptoms Associated With Menopause: OASIS 1 and 2 Randomized Clinical Trials.,JAMA,2024
+OASIS,26907748,Introducing the Open Affective Standardized Image Set (OASIS).,Behavior research methods,2017
+OASIS,38215153,CREB3L1/OASIS: cell cycle regulator and tumor suppressor.,The FEBS journal,2024
+MCSA,37461495,Hip thrust and back squat training elicit similar gluteus muscle hypertrophy and transfer similarly to the deadlift.,bioRxiv : the preprint server for biology,2023
+MCSA,37144554,"The effects of resistance training to near failure on strength, hypertrophy, and motor unit adaptations in previously trained adults.",Physiological reports,2023
+MCSA,38249092,Exercise-Induced Asthma: Managing Respiratory Issues in Athletes.,Journal of functional morphology and kinesiology,2024
+WRAP,31908391,Wrap choice during fundoplication.,World journal of gastroenterology,2019
+WRAP,29609098,The sentence wrap-up dogma.,Cognition,2018
+WRAP,34781406,Wrap-Clipping for Patients with Ruptured Blood Blister-Like Aneurysms of the Internal Carotid Artery: Case Series and Literature Review.,"Journal of neurological surgery. Part A, Central European neurosurgery",2022
+PREVENT,36028160,Preventing postpartum hemorrhage with combined therapy rather than oxytocin alone.,American journal of obstetrics & gynecology MFM,2023
+PREVENT,36280532,Development of mRNA vaccines against respiratory syncytial virus (RSV).,Cytokine & growth factor reviews,2022
+PREVENT,39142043,Methods to prevent lymphocele after kidney transplantation: Seeking the optimal technique for avoiding a preventable complication.,"Transplantation reviews (Orlando, Fla.)",2024
+DIAN,28739983,[DIAN/DIAN-J/DIAN-TU].,Brain and nerve = Shinkei kenkyu no shinpo,2017
+DIAN,24101429,[The DIAN study].,Brain and nerve = Shinkei kenkyu no shinpo,2013
+DIAN,32492406,Proteomic and Metabolomic Characterization of COVID-19 Patient Sera.,Cell,2020
+A4,39941782,Adoptive T Cell Therapy Targeting MAGE-A4.,Cancers,2025
+A4,30058075,Leukotriene A4 hydrolase: an emerging target of natural products for cancer chemoprevention and chemotherapy.,Annals of the New York Academy of Sciences,2018
+A4,39071307,MAGE-A4-Responsive Plasma Cells Promote Non-Small Cell Lung Cancer.,bioRxiv : the preprint server for biology,2024
+LEADS,33652454,Pathophysiology of sepsis.,Current opinion in anaesthesiology,2021
+LEADS,29370904,Leads leading leaflets to leak.,The Journal of thoracic and cardiovascular surgery,2018
+HRS,38246506,Hepatorenal Syndrome in Cirrhosis.,Gastroenterology,2024
+HRS,37982156,Securing the diagnosis of HRS-AKI: implications for current therapies.,Expert review of gastroenterology & hepatology,2023
+HRS,30213943,Hepatorenal syndrome.,Nature reviews. Disease primers,2018
+APOE4,36614219,Apoe4 and Alzheimer's Disease Pathogenesis-Mitochondrial Deregulation and Targeted Therapeutic Strategies.,International journal of molecular sciences,2023
+APOE4,33658354,,Science translational medicine,2021
+APOE4,29861287,APOE4 Causes Widespread Molecular and Cellular Alterations Associated with Alzheimer's Disease Phenotypes in Human iPSC-Derived Brain Cell Types.,Neuron,2018
+NIAGADS,39417134,NIAGADS: A Comprehensive National Data Repository for Alzheimer's Disease and Related Dementia Genetics and Genomics Research.,medRxiv : the preprint server for health sciences,2024
+NIAGADS,37881831,NIAGADS Alzheimer's GenomicsDB: A resource for exploring Alzheimer's disease genetic and genomic knowledge.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2024
+NIAGADS,40545618,NIAGADS: A data repository for Alzheimer's disease and related dementia genomics.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2025
+Alzheimer Prevention Trials (APT) Webstudy,32920623,Recruitment into the Alzheimer Prevention Trials (APT) Webstudy for a Trial-Ready Cohort for Preclinical and Prodromal Alzheimer's Disease (TRC-PAD).,The journal of prevention of Alzheimer's disease..,2020
+Alzheimer Prevention Trials (APT) Webstudy,32920621,The Trial-Ready Cohort for Preclinical/Prodromal Alzheimer's Disease (TRC-PAD) Project: An Overview.,The journal of prevention of Alzheimer's disease..,2020
+Alzheimer Prevention Trials (APT) Webstudy,32920625,The Trial-Ready Cohort for Preclinical and Prodromal Alzheimer's Disease (TRC-PAD): Experience from the First 3 Years.,The journal of prevention of Alzheimer's disease..,2020
+SCAN DATA,38630236,CT Scan Data Analysis in Malformations of Cortical Development.,"Methods in molecular biology (Clifton, N.J.)",2024
+SCAN DATA,36175526,A tree-based scan statistic for zero-inflated count data in post-market drug safety surveillance.,Scientific reports,2022
+SCAN DATA,29871009,[Lung scintigraphy].,Nuklearmedizin. Nuclear medicine,2018
+MAYO RNAseq Study,35599179,The heterogeneity of cellular senescence: insights at the single-cell level.,Trends in cell biology,2023
+MAYO RNAseq Study,34263179,KDM4 Orchestrates Epigenomic Remodeling of Senescent Cells and Potentiates the Senescence-Associated Secretory Phenotype.,Nature aging,2021
+MAYO RNAseq Study,36632223,Enhancer RNA promotes resistance to radiotherapy in bone-metastatic prostate cancer by m,Theranostics,2023
+HELIAD,34759053,Diet Inflammatory Index and Dementia Incidence: A Population-Based Study.,Neurology,2021
+HELIAD,32761172,Frailty and Prodromal Parkinson's Disease: Results From the HELIAD Study.,"The journals of gerontology. Series A, Biological sciences and medical sciences",2021
+HELIAD,36281679,Objective and Subjective Measurements of Motor Function: Results from the HELIAD Study.,The journal of prevention of Alzheimer's disease..,2022
+PHARMACOG,30958385,One Step Forward Toward a Surrogate Endpoint for Clinical Trials of Alzheimer's Disease Drugs: The Results of PharmaCog WP5 (European ADNI).,Journal of Alzheimer's disease : JAD,2019
+PHARMACOG,31377262,Cyberecoethnopharmacolomics.,Journal of ethnopharmacology,2019
+PHARMACOG,30149449,Plasma Aβ42 as a Biomarker of Prodromal Alzheimer's Disease Progression in Patients with Amnestic Mild Cognitive Impairment: Evidence from the PharmaCog/E-ADNI Study.,Journal of Alzheimer's disease : JAD,2019
+I-ADNI,24577455,The Italian Alzheimer's Disease Neuroimaging Initiative (I-ADNI): validation of structural MR imaging.,Journal of Alzheimer's disease : JAD,2014
+ARWIBO,34262425,Norms for Automatic Estimation of Hippocampal Atrophy and a Step Forward for Applicability to the Italian Population.,Frontiers in neuroscience,2021
+API,35696082,iPTMnet RESTful API for Post-translational Modification Network Analysis.,"Methods in molecular biology (Clifton, N.J.)",2022
+API,39630926,SmartGraph API: Programmatic Knowledge Mining in Network-Pharmacology Setting.,Journal of chemical information and modeling,2024
+API,34378939,What Are the Important Factors That Influence API Crystallization in Miscible Amorphous API-Excipient Mixtures during Long-Term Storage in the Glassy State?,Molecular pharmaceutics,2022
+LBLS,30655581,Real life Experience of Medical Cannabis Treatment in Autism: Analysis of Safety and Efficacy.,Scientific reports,2019
+LBLS,39329449,DNA methylation as a new tool for the differential diagnosis between T-LBL and lymphocyte-rich thymoma.,The Journal of pathology,2024
+LBLS,34646776,Radiotherapy Response Assessment of Multiple Myeloma: A Dual-Energy CT Approach With Virtual Non-Calcium Images.,Frontiers in oncology,2021
+KAME,16945610,Fruit and vegetable juices and Alzheimer's disease: the Kame Project.,The American journal of medicine,2006
+KAME,16185373,Alcohol and cognitive performance: a longitudinal study of older Japanese Americans. The Kame Project.,International psychogeriatrics,2005
+KAME,29966533,Genomic characterization of colitis-associated colorectal cancer.,World journal of surgical oncology,2018
+IIDP,39605606,Heterogeneous endocrine cell composition defines human islet functional phenotypes.,bioRxiv : the preprint server for biology,2024
+IIDP,34846874,The Catalytic Asymmetric Intermolecular Prins Reaction.,Journal of the American Chemical Society,2021
+IIDP,27547839,A General Catalytic Asymmetric Prins Cyclization.,Journal of the American Chemical Society,2016
+KLOSCAD,37058304,Shared Risk Factors for Depressive Disorder Among Older Adult Couples in Korea.,JAMA network open,2023
+KLOSCAD,38994939,Predicting Longitudinal Cognitive Decline and Alzheimer's Conversion in Mild Cognitive Impairment Patients Based on Plasma Biomarkers.,Cells,2024
+KLOSCAD,34928355,Exploration of Cognitive Outcomes and Risk Factors for Cognitive Decline Shared by Couples.,JAMA network open,2021
+LMRR,30794372,LmrR: A Privileged Scaffold for Artificial Metalloenzymes.,Accounts of chemical research,2019
+LMRR,21330438,LmrR-mediated gene regulation of multidrug resistance in Lactococcus lactis.,"Microbiology (Reading, England)",2011
+LMRR,25403615,Dynamic multidrug recognition by multidrug transcriptional repressor LmrR.,Scientific reports,2014
+WLS,33853474,WLS/wntless is essential in controlling dendritic cell homeostasis via a WNT signaling-independent mechanism.,Autophagy,2021
+WLS,33437943,WLS-Wnt signaling promotes neuroendocrine prostate cancer.,iScience,2021
+WLS,33359762,The function of Wls in ovarian development.,Molecular and cellular endocrinology,2021
+CBAS,30644617,Biomimetic Carbohydrate-Binding Agents (CBAs): Binding Affinities and Biological Activities.,Chembiochem : a European journal of chemical biology,2019
+CBAS,36217681,A clinical bulbar assessment scale (CBAS) for amyotrophic lateral sclerosis.,Muscle & nerve,2022
+CBAS,32898304,Education and training for preventing and minimizing workplace aggression directed toward healthcare workers.,The Cochrane database of systematic reviews,2020
+DESCRIPA,27335041,MCI Patients in Europe: Medication and Comorbidities. The DESCRIPA Study.,Current Alzheimer research,2016
+DESCRIPA,18958573,Brain SPECT in subtypes of mild cognitive impairment. Findings from the DESCRIPA multicenter study.,Journal of neurology,2008
+DESCRIPA,24035058,Automatic temporal lobe atrophy assessment in prodromal AD: Data from the DESCRIPA study.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2014
+FNAD,33659161,Ultrasound-guided-fine-needle Aspiration Drainage and Percutaneous Ethanol Injection for Benign Neck Cysts.,Journal of medical ultrasound,2020
+FNAD,36338350,Detecting fake news and disinformation using artificial intelligence and machine learning to avoid supply chain disruptions.,Annals of operations research,2022
+FNAD,32787724,"Resilience, Trauma, and Cultural Norms Regarding Disclosure of Mental Health Problems among Foreign-Born and US-Born Filipino American Women.","Behavioral medicine (Washington, D.C.)",2020
+ACE,8862965,"ACE inhibitor-induced cough and bronchospasm. Incidence, mechanisms and management.",Drug safety,1996
+ACE,36016727,Exploring the Impact of ACE Inhibition in Immunity and Disease.,Journal of the renin-angiotensin-aldosterone system : JRAAS,2022
+EPINETTE,36373289,30 years of the European Hip Society.,Hip international : the journal of clinical and experimental research on hip pathology and therapy,2022
+EPINETTE,31598332,Dual mobility total hip arthroplasty: should everyone get one?,EFORT open reviews,2019
+FHS,26705418,Cohort Profile: The Framingham Heart Study (FHS): overview of milestones in cardiovascular epidemiology.,International journal of epidemiology,2015
+FHS,31065045,70-year legacy of the Framingham Heart Study.,Nature reviews. Cardiology,2019
+FHS,28578505,Family history and risk of breast cancer: an analysis accounting for family structure.,Breast cancer research and treatment,2017
+NUAGE,34772788,Nuage condensates: accelerators or circuit breakers for sRNA silencing pathways?,"RNA (New York, N.Y.)",2022
+NUAGE,25747659,Phase transition of a disordered nuage protein generates environmentally responsive membraneless organelles.,Molecular cell,2015
+NUAGE,22585039,Nuage proteins: their localization in subcellular structures of spermatogenic cells as revealed by immunoelectron microscopy.,Histochemistry and cell biology,2012
+TARCC,33550870,The link between nutrition and Alzheimer's disease: from prevention to treatment.,Neurodegenerative disease management,2021
+TARCC,35068461,Factors Associated with Apathy in Alzheimer's Disease: A Cross-Sectional Analysis of the Texas Alzheimer's Research and Care Consortium (TARCC) Study.,Journal of Alzheimer's disease : JAD,2022
+TARCC,36710674,Apathy as a Predictor of Conversion from Mild Cognitive Impairment to Alzheimer's Disease: A Texas Alzheimer's Research and Care Consortium (TARCC) Cohort-Based Analysis.,Journal of Alzheimer's disease : JAD,2023
+DBIS,36600525,Study of dog control strategies.,Injury prevention : journal of the International Society for Child and Adolescent Injury Prevention,2023
+DBIS,35861112,Effectiveness of distance-based suicide interventions: multi-level meta-analysis and systematic review.,BJPsych open,2022
+DBIS,18506621,Dissonance-based Interventions for the prevention of eating disorders: using persuasion principles to promote health.,Prevention science : the official journal of the Society for Prevention Research,2008
+TIGER,37478964,"The ""tiger-man"" sign.",Joint bone spine,2024
+TIGER,37231304,Tiger protection brings carbon benefits.,Nature ecology & evolution,2023
+TIGER,27540149,Tiger land.,"Science (New York, N.Y.)",2016
+TOMMORROW (TOMM),25044051,The TOMM40 poly-T rs10524523 variant is associated with cognitive performance among non-demented elderly with type 2 diabetes.,European neuropsychopharmacology : the journal of the European College of Neuropsychopharmacology,2014
+NCRAD,37698424,The Alzheimer's Disease Neuroimaging Initiative in the era of Alzheimer's disease treatment: A review of ADNI studies from 2021 to 2022.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2024
+NCRAD,24425039,Age-specific incidence rates for dementia and Alzheimer disease in NIA-LOAD/NCRAD and EFIGA families: National Institute on Aging Genetics Initiative for Late-Onset Alzheimer Disease/National Cell Repository for Alzheimer Disease (NIA-LOAD/NCRAD) and Estudio Familiar de Influencia Genetica en Alzheimer (EFIGA).,JAMA neurology,2014
+NCRAD,22486522,Analysis of copy number variation in Alzheimer's disease: the NIALOAD/ NCRAD Family Study.,Current Alzheimer research,2012
+DART,39045658,Dart and the Taung juvenile: making sense of a century-old record of hominin evolution in Africa.,Biology letters,2024
+DART,25975720,Applications of DART-MS for food quality and safety assurance in food supply chain.,Mass spectrometry reviews,2017
+DART,39669222,DART: Distance Assisted Recursive Testing.,Journal of machine learning research : JMLR,2023
+SALZA,21401445,"Epidemiological data, efficacy and safety of a paracetamol-tramadol fixed combination in the treatment of moderate-to-severe pain. SALZA: a post-marketing study in general practice.",Current medical research and opinion,2011
+SALZA,24815015,Matricryptins and matrikines: biologically active fragments of the extracellular matrix.,Experimental dermatology,2014
+SALZA,109377,"Effect of mineral waters from the Hissar spas ""Momina Banja"" and ""Momina Salza"" on bile secretion (experimental study).",Folia medica,1978
+J-ADNI,21921517,[J-ADNI].,Rinsho shinkeigaku = Clinical neurology,2010
+J-ADNI,38842037,Development of disease-modifying therapies against Alzheimer's disease.,Psychiatry and clinical neurosciences,2024
+J-ADNI,28739982,[Preclinical AD and Biomarker; from J-ADNI to AMED Preclinical Study].,Brain and nerve = Shinkei kenkyu no shinpo,2017
+AGA,39572132,AGA Living Clinical Practice Guideline on Pharmacological Management of Moderate-to-Severe Ulcerative Colitis.,Gastroenterology,2024
+AGA,37498275,AGA Clinical Practice Update on Management of Ostomies: Commentary.,Clinical gastroenterology and hepatology : the official clinical practice journal of the American Gastroenterological Association,2023
+AGA,38456869,AGA Clinical Practice Update on Diagnosis and Management of Cannabinoid Hyperemesis Syndrome: Commentary.,Gastroenterology,2024
+CPAD,31979981,CPAD 2.0: a repository of curated experimental data on aggregating proteins and peptides.,Amyloid : the international journal of experimental and clinical investigation : the official journal of the International Society of Amyloidosis,2020
+CPAD,27043825,"CPAD, Curated Protein Aggregation Database: A Repository of Manually Curated Experimental Data on Protein and Peptide Aggregation.",PloS one,2016
+CPAD,28119840,Relationship Between Cognitive Perceptual Abilities and Accident and Penalty Histories Among Elderly Korean Drivers.,Annals of rehabilitation medicine,2016
+CLS,28895151,Role of closed loop stimulation pacing (CLS) in vasovagal syncope.,Pacing and clinical electrophysiology : PACE,2017
+CLS,33092960,"Outcome, influence factor and development of CLS measurement in continuous IOP monitoring: A narrative review.",Contact lens & anterior eye : the journal of the British Contact Lens Association,2021
+CLS,30289072,Probable Mechanisms Involved in Immunotoxin Mediated Capillary Leak Syndrome (CLS) and Recently Developed Countering Strategies.,Current molecular medicine,2018
+KBASE,36376589,Metagenome-assembled genome extraction and analysis from microbiomes using KBase.,Nature protocols,2023
+KBASE,28800158,Using KBase to Assemble and Annotate Prokaryotic Genomes.,Current protocols in microbiology,2017
+KBASE,29979655,KBase: The United States Department of Energy Systems Biology Knowledgebase.,Nature biotechnology,2018
+CIEN,31021541,[Influenza: avances y retos cien años después de la pandemia].,Biomedica : revista del Instituto Nacional de Salud,2019
+CIEN,29267700,EDITORIAL.,Ciencia & saude coletiva,2017
+CIEN,37402255,[Not Available].,"Revista de la Facultad de Ciencias Medicas (Cordoba, Argentina)",2023
+IDEAS,37002094,Reconsidering classic ideas in speech communication.,The Journal of the Acoustical Society of America,2023
+IDEAS,37809308,Editorial: New ideas in language sciences: linguistics.,Frontiers in psychology,2023
+IDEAS,38074755,On the diversity of ideas in academic spaces.,Frontiers in public health,2023
+CLSA,35273064,Cohort profile: genomic data for 26 622 individuals from the Canadian Longitudinal Study on Aging (CLSA).,BMJ open,2022
+CLSA,19860982,"Ascertainment of chronic diseases in the Canadian longitudinal study on aging (CLSA), systematic review.",Canadian journal on aging = La revue canadienne du vieillissement,2009
+CLSA,37022906,CLSA: A Contrastive Learning Framework With Selective Aggregation for Video Rescaling.,IEEE transactions on image processing : a publication of the IEEE Signal Processing Society,2023
+GERAS,39020175,Inhibition of IL-11 signalling extends mammalian healthspan and lifespan.,Nature,2024
+GERAS,39121846,Guidelines for minimal information on cellular senescence experimentation in vivo.,Cell,2024
+GERAS,37267953,Clearance of senescent macrophages ameliorates tumorigenesis in KRAS-driven lung cancer.,Cancer cell,2023
+MAS,33578691,HR-MAS NMR Applications in Plant Metabolomics.,"Molecules (Basel, Switzerland)",2021
+MAS,30736341,Current Developments in µMAS NMR Analysis for Metabolomics.,Metabolites,2019
+MAS,30210335,,Frontiers in pharmacology,2018
+ABC-DS,40371686,The Alzheimer's Biomarker Consortium-Down Syndrome (ABC-DS): A 10-year report.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2025
+ABC-DS,38811657,Cerebrovascular disease emerges with age and Alzheimer's disease in adults with Down syndrome.,Scientific reports,2024
+ABC-DS,39578645,Spatial and single-nucleus transcriptomic analysis of genetic and sporadic forms of Alzheimer's disease.,Nature genetics,2024
+HAP,28749199,Hair follicle-associated-pluripotent (HAP) stem cells.,"Cell cycle (Georgetown, Tex.)",2017
+HAP,35008011,Development of HAp/GO/Ag coating on 316 LVM implant for medical applications.,Journal of the mechanical behavior of biomedical materials,2022
+HAP,32942227,Laser-assisted production of HAp-coated zirconia structured surfaces for biomedical applications.,Journal of the mechanical behavior of biomedical materials,2020
+Framingham Heart Study (FHS),26705418,Cohort Profile: The Framingham Heart Study (FHS): overview of milestones in cardiovascular epidemiology.,International journal of epidemiology,2015
+Framingham Heart Study (FHS),31065045,70-year legacy of the Framingham Heart Study.,Nature reviews. Cardiology,2019
+Framingham Heart Study (FHS),38014669,Association of Life's Essential 8 With Cardiovascular Disease and Mortality: The Framingham Heart Study.,Journal of the American Heart Association,2023
+Baltimore Longitudinal Study of Aging (BLSA),36910594,Longitudinal phenotypic aging metrics in the Baltimore Longitudinal Study of Aging.,Nature aging,2022
+Baltimore Longitudinal Study of Aging (BLSA),31945054,A proteomic atlas of senescence-associated secretomes for aging biomarker development.,PLoS biology,2020
+Baltimore Longitudinal Study of Aging (BLSA),19126858,The Baltimore Longitudinal Study of Aging (BLSA): a 50-year-long journey and plans for the future.,"The journals of gerontology. Series A, Biological sciences and medical sciences",2008
+Cache County Memory Study,24423221,The Cache County Study on Memory in Aging: factors affecting risk of Alzheimer's disease and its progression after onset.,"International review of psychiatry (Abingdon, England)",2013
+Cache County Memory Study,36923233,"Clinical Ratings of White Matter Hyperintensities, Hippocampal Ratings, and Neuropsychological Functioning from The Cache County Memory Study.",JAR life,2022
+Cache County Memory Study,38052027,"Scheltens ratings, clinical white matter hyperintensities and executive functioning in the Cache County Memory Study.",Applied neuropsychology. Adult,2023
+Cardiovascular Health Study (CHS),33003255,The revised Japanese version of the Cardiovascular Health Study criteria (revised J-CHS criteria).,Geriatrics & gerontology international,2020
+Cardiovascular Health Study (CHS),23045516,Evaluation of the cardiovascular health study (CHS) instrument and the Vulnerable Elders Survey-13 (VES-13) in elderly cancer patients. Are we still missing the right screening tool?,Annals of oncology : official journal of the European Society for Medical Oncology,2013
+Cardiovascular Health Study (CHS),31150075,Association of Trajectory of Cardiovascular Health Score and Incident Cardiovascular Disease.,JAMA network open,2019
+Canadian Longitudinal Study on Aging (CLSA),35797007,"Multimorbidity, COVID-19 and Mental Health: Canadian Longitudinal Study on Aging (CLSA) Longitudinal Analyses.",Clinical gerontologist,2023
+Canadian Longitudinal Study on Aging (CLSA),31633757,Cohort Profile: The Canadian Longitudinal Study on Aging (CLSA).,International journal of epidemiology,2019
+Canadian Longitudinal Study on Aging (CLSA),36722191,The Canadian Longitudinal Study on Aging: A Vehicle for Research on Aging in Older Veterans.,Military medicine,2024
+AMP-AD,34757660,Integrative metabolomics-genomics approach reveals key metabolic pathways and regulators of Alzheimer's disease.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2022
+AMP-AD,37019812,Moving beyond amyloid and tau to capture the biological heterogeneity of Alzheimer's disease.,Trends in neurosciences,2023
+AMP-AD,26853544,Accelerating Medicines Partnership: Alzheimer's Disease (AMP-AD) Knowledge Portal Aids Alzheimer's Drug Discovery through Open Data Sharing.,Expert opinion on therapeutic targets,2016
+EADB,36066633,Genome-wide meta-analysis for Alzheimer's disease cerebrospinal fluid biomarkers.,Acta neuropathologica,2022
+EADB,35379992,New insights into the genetic etiology of Alzheimer's disease and related dementias.,Nature genetics,2022
+EADB,37195665,Genetic Associations Between Modifiable Risk Factors and Alzheimer Disease.,JAMA network open,2023
+CHARGE,36549854,The No Surprises Act: What Neuroradiologists Should Know.,AJNR. American journal of neuroradiology,2023
+CHARGE,13154221,The administrator-in-charge.,Modern hospital,1954
+CHARGE,27207899,GPs back government move to charge overseas visitors.,BMJ (Clinical research ed.),2016
+ADSP WES and WGS,35966919,A Fast and Robust Strategy to Remove Variant-Level Artifacts in Alzheimer Disease Sequencing Project Data.,Neurology. Genetics,2022
+HCP Aging,27437579,A multi-modal parcellation of human cerebral cortex.,Nature,2016
+HCP Aging,39639335,Choroid plexus aging: structural and vascular insights from the HCP-aging dataset.,Fluids and barriers of the CNS,2024
+HCP Aging,37663773,A population-averaged structural connectomic brain atlas dataset from 422 HCP-aging subjects.,Data in brief,2023
+Harvard Aging Brain Study (HABS),37843849,Etiology of White Matter Hyperintensities in Autosomal Dominant and Sporadic Alzheimer Disease.,JAMA neurology,2023
+Harvard Aging Brain Study (HABS),38443298,Study Partner Report of Apathy in Older Adults is Associated with AD Biomarkers: Findings from the Harvard Aging Brain Study.,The American journal of geriatric psychiatry : official journal of the American Association for Geriatric Psychiatry,2024
+Harvard Aging Brain Study (HABS),37578787,Increased Medial Temporal Tau Positron Emission Tomography Uptake in the Absence of Amyloid-β Positivity.,JAMA neurology,2023
+SPIN,39363911,Spin-dependent electrocatalysis.,National science review,2024
+SPIN,36618004,Graphene Spin Valves for Spin Logic Devices.,"Advanced materials (Deerfield Beach, Fla.)",2023
+SPIN,31451780,Spin current as a probe of quantum materials.,Nature materials,2020
+BrANCH,35132061,Selective branch formation in ethylene polymerization to access precise ethylene-propylene copolymers.,Nature communications,2022
+BrANCH,35018278,"Psychiatric Rehabilitation During COVID-19 Pandemic: Richmond Fellowship Society (I), Bangalore Branch Experience.",Journal of psychosocial rehabilitation and mental health,2022
+BrANCH,39146415,Hebbian instruction of axonal connectivity by endogenous correlated spontaneous activity.,"Science (New York, N.Y.)",2024
+Insight46,38574374,Investigating reliable amyloid accumulation in Centiloids: Results from the AMYPAD Prognostic and Natural History Study.,Alzheimer's & dementia : the journal of the Alzheimer's Association,2024
+PAD-TRACK,35869763,[Construction of an adenovirus vector expressing engineered splicing factor for regulating alternative splicing of YAP1 in neonatal rat cardiomyocytes].,Nan fang yi ke da xue xue bao = Journal of Southern Medical University,2022
+MARS,35701621,Mars: do we still need astronauts?,Nature,2022
+MARS,30234380,Methane on Mars and Habitability: Challenges and Responses.,Astrobiology,2018
+MARS,22889316,Mars missions.,Astrobiology,2012
+US-POINTER,36398446,Effects of Eligibility Criteria on Patient Selection and Treatment Implications from 10 Multidomain Dementia Prevention Trials: A Population-Based Study.,Neuroepidemiology,2023
+US-POINTER,38596483,"The AUstralian multidomain Approach to Reduce dementia Risk by prOtecting brain health With lifestyle intervention study (AU-ARROW): A study protocol for a single-blind, multi-site, randomized controlled trial.","Alzheimer's & dementia (New York, N. Y.)",2024
+ADNIDOD,39497016,Volumetric Integrated Classification Index: An Integrated Voxel-Based Morphometry and Machine Learning Interpretable Biomarker for Post-Traumatic Stress Disorder.,Journal of imaging informatics in medicine,2024
+ADNIDOD,40526121,Decreased DTI-APLS correlated with cognitive impairment in veterans with post-traumatic stress disorder.,European archives of psychiatry and clinical neuroscience,2025
