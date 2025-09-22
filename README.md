@@ -72,9 +72,11 @@ ADRD-KG/
 ## Quick Start
 
 ### Prerequisites
-- Python 3.8+
-- Node.js 16+
-- npm or yarn
+- **Python 3.8-3.12** (Python 3.13+ may have compatibility issues with some packages)
+- **Node.js 16+**
+- **npm or yarn**
+
+> **Note:** If you're using Python 3.13+, see the troubleshooting section below for compatibility solutions.
 
 ### Backend Setup
 
@@ -89,17 +91,43 @@ ADRD-KG/
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-3. **Install dependencies:**
+3. **Upgrade pip and setuptools (Important for Python 3.13+):**
+   ```bash
+   python -m pip install --upgrade pip setuptools wheel
+   ```
+
+4. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run the Flask application:**
+5. **Run the Flask application:**
    ```bash
    python app.py
    ```
 
    The API will be available at `http://localhost:5000`
+
+#### Troubleshooting Python 3.13 Compatibility Issues
+
+If you encounter `AttributeError: module 'pkgutil' has no attribute 'ImpImporter'` errors:
+
+**Option 1: Use Python 3.11 or 3.12 (Recommended)**
+```bash
+# Install Python 3.12 and use it instead
+python3.12 -m venv venv
+```
+
+**Option 2: Force install with no-build-isolation**
+```bash
+pip install --no-build-isolation -r requirements.txt
+```
+
+**Option 3: Install packages individually**
+```bash
+pip install Flask Flask-CORS Flask-SQLAlchemy
+pip install pandas numpy openpyxl python-dotenv
+```
 
 ### Frontend Setup
 
@@ -172,6 +200,26 @@ The frontend uses Material-UI with a custom theme:
 - Primary color: `#004c97` (Deep blue)
 - Secondary color: `#8E7DBE` (Dusty lavender)
 - Consistent spacing and typography
+
+## Known Issues & Solutions
+
+### Python 3.13 Compatibility
+Some Python packages haven't fully updated for Python 3.13 compatibility, causing `pkgutil.ImpImporter` errors.
+
+**Solutions:**
+1. **Use Python 3.11 or 3.12** (Most reliable)
+2. **Try the no-build-isolation flag:** `pip install --no-build-isolation -r requirements.txt`
+3. **Install packages individually** as shown in the troubleshooting section above
+
+### Windows-Specific Issues
+- Ensure you're using the correct virtual environment activation command: `venv\Scripts\activate`
+- If you encounter permission errors, run PowerShell as Administrator
+- Consider using Windows Subsystem for Linux (WSL) for a more Unix-like environment
+
+### Node.js/npm Issues
+- If npm is not recognized, ensure Node.js is properly installed and added to PATH
+- Try using `npx` instead of `npm` for package execution
+- Clear npm cache if installation fails: `npm cache clean --force`
 
 ## Contributing
 

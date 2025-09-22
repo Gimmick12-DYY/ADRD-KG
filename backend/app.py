@@ -245,7 +245,7 @@ def load_sample_data():
         print(f"Error loading sample data: {e}")
 
 # Initialize database
-@app.before_first_request
+@app.before_request
 def create_tables():
     db.create_all()
     load_sample_data()
