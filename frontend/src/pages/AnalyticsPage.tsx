@@ -94,7 +94,7 @@ const AnalyticsPage: React.FC = () => {
 
       {/* Overview Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h4" component="div" color="primary">
@@ -107,7 +107,7 @@ const AnalyticsPage: React.FC = () => {
           </Card>
         </Grid>
         
-        <Grid xs={12} sm={6} md={3}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h4" component="div" color="secondary">
@@ -120,7 +120,7 @@ const AnalyticsPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h4" component="div" color="success.main">
@@ -133,7 +133,7 @@ const AnalyticsPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h4" component="div" color="info.main">
@@ -150,7 +150,7 @@ const AnalyticsPage: React.FC = () => {
       {/* Charts */}
       <Grid container spacing={3}>
         {/* Disease Distribution */}
-        <Grid xs={12} md={6}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -180,7 +180,7 @@ const AnalyticsPage: React.FC = () => {
         </Grid>
 
         {/* Publication Years */}
-        <Grid xs={12} md={6}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -200,7 +200,7 @@ const AnalyticsPage: React.FC = () => {
         </Grid>
 
         {/* Data Accessibility */}
-        <Grid xs={12} md={6}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -220,7 +220,7 @@ const AnalyticsPage: React.FC = () => {
         </Grid>
 
         {/* WGS Availability */}
-        <Grid xs={12} md={6}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -252,14 +252,14 @@ const AnalyticsPage: React.FC = () => {
 
       {/* Summary Statistics */}
       <Grid container spacing={3} sx={{ mt: 2 }}>
-        <Grid xs={12}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Summary Statistics
               </Typography>
               <Grid container spacing={2}>
-                <Grid xs={12} sm={6} md={3}>
+                <Grid>
                   <Box sx={{ textAlign: 'center', p: 2 }}>
                     <Typography variant="h5" color="primary">
                       {analytics.overview.min_sample_size.toLocaleString()}
@@ -269,7 +269,7 @@ const AnalyticsPage: React.FC = () => {
                     </Typography>
                   </Box>
                 </Grid>
-                <Grid xs={12} sm={6} md={3}>
+                <Grid>
                   <Box sx={{ textAlign: 'center', p: 2 }}>
                     <Typography variant="h5" color="secondary">
                       {analytics.disease_distribution.length}
@@ -279,7 +279,7 @@ const AnalyticsPage: React.FC = () => {
                     </Typography>
                   </Box>
                 </Grid>
-                <Grid xs={12} sm={6} md={3}>
+                <Grid>
                   <Box sx={{ textAlign: 'center', p: 2 }}>
                     <Typography variant="h5" color="success.main">
                       {analytics.publication_years.length}
@@ -289,7 +289,7 @@ const AnalyticsPage: React.FC = () => {
                     </Typography>
                   </Box>
                 </Grid>
-                <Grid xs={12} sm={6} md={3}>
+                <Grid>
                   <Box sx={{ textAlign: 'center', p: 2 }}>
                     <Typography variant="h5" color="info.main">
                       {analytics.data_accessibility.length}

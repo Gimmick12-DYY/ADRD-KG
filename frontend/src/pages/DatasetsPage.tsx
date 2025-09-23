@@ -88,7 +88,7 @@ const DatasetsPage: React.FC = () => {
   };
 
   const handleFilterChange = (filterName: string, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev: any) => ({
       ...prev,
       [filterName]: value || undefined,
     }));
@@ -143,7 +143,7 @@ const DatasetsPage: React.FC = () => {
     <Container maxWidth="lg">
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          📊 Datasets
+          Datasets
         </Typography>
         <Typography variant="body1" color="text.secondary">
           Explore and search through ADRD research datasets
@@ -160,7 +160,7 @@ const DatasetsPage: React.FC = () => {
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Grid container spacing={2} alignItems="center">
-            <Grid xs={12} md={4}>
+             <Grid>
               <TextField
                 fullWidth
                 label="Search datasets"
@@ -171,9 +171,10 @@ const DatasetsPage: React.FC = () => {
                   startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />,
                 }}
               />
+              </Grid>
             </Grid>
             
-            <Grid xs={12} md={2}>
+            <Grid>
               <FormControl fullWidth>
                 <InputLabel>Disease Type</InputLabel>
                 <Select
@@ -189,7 +190,7 @@ const DatasetsPage: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid xs={12} md={2}>
+             <Grid>
               <FormControl fullWidth>
                 <InputLabel>Modality</InputLabel>
                 <Select
@@ -205,7 +206,7 @@ const DatasetsPage: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid xs={12} md={2}>
+            <Grid>
               <Button
                 variant="contained"
                 onClick={handleSearch}
@@ -216,7 +217,7 @@ const DatasetsPage: React.FC = () => {
               </Button>
             </Grid>
 
-            <Grid xs={12} md={2}>
+            <Grid>
               <Button
                 variant="outlined"
                 onClick={clearFilters}
@@ -226,7 +227,6 @@ const DatasetsPage: React.FC = () => {
                 Clear
               </Button>
             </Grid>
-          </Grid>
         </CardContent>
       </Card>
 
@@ -247,7 +247,7 @@ const DatasetsPage: React.FC = () => {
       {/* Datasets Grid */}
       <Grid container spacing={3}>
         {datasets.map((dataset) => (
-          <Grid xs={12} md={6} lg={4} key={dataset.id}>
+           <Grid>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="h6" component="h2" gutterBottom>

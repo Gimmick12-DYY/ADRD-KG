@@ -100,7 +100,7 @@ const HomePage: React.FC = () => {
     <Container maxWidth="lg">
       <Box sx={{ mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom align="center">
-          🧠 ADRD Knowledge Graph
+          Welcome to ADRD-KG
         </Typography>
         <Typography variant="h6" color="text.secondary" align="center" paragraph>
           Exploring Alzheimer's Disease and Related Dementias Research Datasets
@@ -109,7 +109,7 @@ const HomePage: React.FC = () => {
 
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
@@ -127,7 +127,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
         
-        <Grid xs={12} sm={6} md={3}>
+        <Grid>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
@@ -145,7 +145,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
@@ -163,7 +163,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
@@ -189,7 +189,7 @@ const HomePage: React.FC = () => {
 
       {/* Recent Data */}
       <Grid container spacing={3}>
-        <Grid xs={12} md={6}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -221,7 +221,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid xs={12} md={6}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>

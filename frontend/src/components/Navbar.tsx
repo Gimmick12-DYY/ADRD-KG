@@ -11,6 +11,7 @@ import {
   Home,
   Storage,
   Article,
+  CloudUpload,
   Analytics,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -23,18 +24,19 @@ const Navbar: React.FC = () => {
     { label: 'Home', path: '/', icon: <Home /> },
     { label: 'Datasets', path: '/datasets', icon: <Storage /> },
     { label: 'Publications', path: '/publications', icon: <Article /> },
+    { label: 'Contribute', path: '/contribute', icon: <CloudUpload /> },
     { label: 'Analytics', path: '/analytics', icon: <Analytics /> },
   ];
 
   return (
-    <AppBar position="static" elevation={2}>
-      <Toolbar>
+    <AppBar position="fixed" elevation={2} sx={{ width: '100%', top: 0, left: 0, right: 0 }}>
+      <Toolbar sx={{ px: 2 }}>
         <Typography
           variant="h6"
           component="div"
-          sx={{ flexGrow: 1, fontWeight: 'bold' }}
+          sx={{ fontWeight: 'bold', mr: 'auto' }}
         >
-          🧠 ADRD Knowledge Graph
+          ADRD INFO ATLAS
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
           {menuItems.map((item) => (

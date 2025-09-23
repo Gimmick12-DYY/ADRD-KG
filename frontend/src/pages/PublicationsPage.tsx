@@ -68,7 +68,7 @@ const PublicationsPage: React.FC = () => {
   };
 
   const handleFilterChange = (filterName: string, value: string | number) => {
-    setFilters(prev => ({
+    setFilters((prev: any) => ({
       ...prev,
       [filterName]: value || undefined,
     }));
@@ -121,7 +121,7 @@ const PublicationsPage: React.FC = () => {
     <Container maxWidth="lg">
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          📚 Publications
+          Available Publications
         </Typography>
         <Typography variant="body1" color="text.secondary">
           Browse and search through ADRD research publications
@@ -132,13 +132,13 @@ const PublicationsPage: React.FC = () => {
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
-      )}
+      )} 
 
       {/* Search and Filters */}
-      <Card sx={{ mb: 3 }}>
+      <Card sx={{ mb: 2 }}>
         <CardContent>
           <Grid container spacing={2} alignItems="center">
-            <Grid xs={12} md={3}>
+            <Grid size={4}>
               <TextField
                 fullWidth
                 label="Search publications"
@@ -151,7 +151,7 @@ const PublicationsPage: React.FC = () => {
               />
             </Grid>
             
-            <Grid xs={12} md={2}>
+            <Grid size={1.5}>
               <FormControl fullWidth>
                 <InputLabel>Year</InputLabel>
                 <Select
@@ -167,7 +167,7 @@ const PublicationsPage: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid xs={12} md={2}>
+            <Grid size={2.5}>
               <TextField
                 fullWidth
                 label="Dataset Name"
@@ -176,7 +176,7 @@ const PublicationsPage: React.FC = () => {
               />
             </Grid>
 
-            <Grid xs={12} md={2}>
+            <Grid size={2}>
               <Button
                 variant="contained"
                 onClick={handleSearch}
@@ -187,7 +187,7 @@ const PublicationsPage: React.FC = () => {
               </Button>
             </Grid>
 
-            <Grid xs={12} md={2}>
+            <Grid size={2}>
               <Button
                 variant="outlined"
                 onClick={clearFilters}
@@ -218,7 +218,7 @@ const PublicationsPage: React.FC = () => {
       {/* Publications List */}
       <Grid container spacing={3}>
         {publications.map((publication) => (
-          <Grid xs={12} key={publication.id}>
+          <Grid>
             <Card>
               <CardContent>
                 <Typography variant="h6" component="h2" gutterBottom>

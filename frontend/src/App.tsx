@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import DatasetsPage from './pages/DatasetsPage';
 import PublicationsPage from './pages/PublicationsPage';
+import ContributionPage from './pages/ContributionPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import './App.css';
 
@@ -33,11 +34,12 @@ function App() {
         <Router>
           <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Navbar />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, pt: 10 }}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/datasets" element={<DatasetsPage />} />
                 <Route path="/publications" element={<PublicationsPage />} />
+                <Route path="/contribute" element={<ContributionPage />} />
                 <Route path="/analytics" element={<AnalyticsPage />} />
               </Routes>
             </Box>
