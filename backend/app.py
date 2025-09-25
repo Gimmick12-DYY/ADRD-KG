@@ -556,7 +556,7 @@ def load_sample_data():
     """Load sample data from Excel file if it exists"""
     try:
         # Try to load from the Excel file
-        excel_path = os.path.join(os.path.dirname(__file__), '..', 'ADRD_Metadata_Sample.xlsx')
+        excel_path = os.path.join(os.path.dirname(__file__), '..', 'ADRD_Metadata_Sample_Big.xlsx')
         if os.path.exists(excel_path):
             df = pd.read_excel(excel_path)
             

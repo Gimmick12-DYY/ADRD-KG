@@ -108,8 +108,8 @@ const HomePage: React.FC = () => {
       </Box>
 
       {/* Statistics Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid>
+      <Grid container spacing={3} maxWidth='lg'>
+        <Grid size={{xs: 12, sm:6, md:3}}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
@@ -127,7 +127,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
         
-        <Grid>
+        <Grid size={{xs: 12, sm:6, md:3}}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
@@ -145,7 +145,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid>
+        <Grid size={{xs: 12, sm:6, md:3}}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
@@ -163,7 +163,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid>
+        <Grid size={{xs: 12, sm:6, md:3}}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
