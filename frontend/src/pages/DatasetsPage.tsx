@@ -160,7 +160,7 @@ const DatasetsPage: React.FC = () => {
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Grid container spacing={2} alignItems="center">
-             <Grid>
+            <Grid size={{xs: 12, sm:6, md:3}}>
               <TextField
                 fullWidth
                 label="Search datasets"
@@ -171,10 +171,9 @@ const DatasetsPage: React.FC = () => {
                   startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />,
                 }}
               />
-              </Grid>
             </Grid>
             
-            <Grid>
+            <Grid size={{xs: 12, sm:6, md:2}}>
               <FormControl fullWidth>
                 <InputLabel>Disease Type</InputLabel>
                 <Select
@@ -190,7 +189,7 @@ const DatasetsPage: React.FC = () => {
               </FormControl>
             </Grid>
 
-             <Grid>
+            <Grid size={{xs: 12, sm:6, md:2}}>
               <FormControl fullWidth>
                 <InputLabel>Modality</InputLabel>
                 <Select
@@ -206,7 +205,7 @@ const DatasetsPage: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid>
+            <Grid size={{xs: 12, sm:6, md:2}}>
               <Button
                 variant="contained"
                 onClick={handleSearch}
@@ -217,7 +216,7 @@ const DatasetsPage: React.FC = () => {
               </Button>
             </Grid>
 
-            <Grid>
+            <Grid size={{xs: 12, sm:6, md:2}}>
               <Button
                 variant="outlined"
                 onClick={clearFilters}
@@ -227,6 +226,7 @@ const DatasetsPage: React.FC = () => {
                 Clear
               </Button>
             </Grid>
+          </Grid>
         </CardContent>
       </Card>
 
@@ -247,7 +247,7 @@ const DatasetsPage: React.FC = () => {
       {/* Datasets Grid */}
       <Grid container spacing={3}>
         {datasets.map((dataset) => (
-           <Grid>
+          <Grid size={{xs: 12, sm: 6, md: 4}} key={dataset.id}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="h6" component="h2" gutterBottom>
