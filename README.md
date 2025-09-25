@@ -69,19 +69,6 @@ ADRD-KG/
 └── README.md
 ```
 
-## System Requirements
-
-### Minimum Requirements
-- **Operating System:** Windows 10/11, macOS 10.15+, or Linux (Ubuntu 18.04+)
-- **RAM:** 4GB minimum, 8GB recommended
-- **Storage:** 2GB free space
-- **Internet:** Required for downloading dependencies
-
-### Software Prerequisites
-- **Python 3.8-3.12** (Python 3.13+ may have compatibility issues)
-- **Node.js 16+** and npm
-- **Git** (for cloning the repository)
-
 ## Installation Guide
 
 ### Step 1: Clone the Repository
