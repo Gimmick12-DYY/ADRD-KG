@@ -1,0 +1,15 @@
+# Django and related packages
+Django==4.2.7
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+
+# Data processing
+pandas==2.3.3
+openpyxl==3.1.5
+
+# Development
+python-dotenv==1.0.0
+
+# Production (optional)
+gunicorn==21.2.0
+whitenoise==6.6.0

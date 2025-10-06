@@ -67,7 +67,7 @@ const DatasetsPage: React.FC = () => {
         ...filters,
         search: searchQuery,
         page,
-        per_page: 10,
+        per_page: 6, // This place set the max number of datasets to be displayed
       };
       const data = await apiService.getDatasets(params);
       setDatasets(data.datasets);
@@ -248,17 +248,39 @@ const DatasetsPage: React.FC = () => {
       <Grid container spacing={3}>
         {datasets.map((dataset) => (
           <Grid size={{xs: 12, sm: 6, md: 4}} key={dataset.id}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" component="h2" gutterBottom>
+            <Card sx={{ 
+              height: '100%', 
+              display: 'flex', 
+              flexDirection: 'column',
+              minHeight: '400px' // Ensure minimum height for consistency
+            }}>
+              <CardContent sx={{ 
+                flexGrow: 1, 
+                display: 'flex', 
+                flexDirection: 'column',
+                pb: 1
+              }}>
+                <Typography variant="h6" component="h2" gutterBottom sx={{ 
+                  minHeight: '48px', // Ensure title area has consistent height
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
                   {dataset.name}
                 </Typography>
                 
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ 
+                  mb: 2, 
+                  flexGrow: 1,
+                  minHeight: '60px', // Ensure description area has consistent height
+                  overflow: 'hidden',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical'
+                }}>
                   {dataset.description}
                 </Typography>
 
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2, minHeight: '32px' }}>
                   {dataset.disease_type && (
                     <Chip label={dataset.disease_type} size="small" color="primary" />
                   )}
@@ -270,24 +292,31 @@ const DatasetsPage: React.FC = () => {
                   )}
                 </Box>
 
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2, minHeight: '32px' }}>
                   {dataset.wgs_available && (
                     <Chip label={`WGS: ${dataset.wgs_available}`} size="small" color="info" />
                   )}
                 </Box>
 
                 {dataset.imaging_types && (
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography variant="caption" color="text.secondary" display="block" sx={{
+                    minHeight: '20px',
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical'
+                  }}>
                     Imaging: {dataset.imaging_types}
                   </Typography>
                 )}
               </CardContent>
               
-              <Box sx={{ p: 2, pt: 0 }}>
+              <Box sx={{ p: 2, pt: 0, mt: 'auto' }}>
                 <Button
                   size="small"
                   startIcon={<Visibility />}
                   onClick={() => handleViewPublications(dataset)}
+                  fullWidth
                 >
                   View Publications
                 </Button>
