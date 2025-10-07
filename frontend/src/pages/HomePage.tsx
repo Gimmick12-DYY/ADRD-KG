@@ -188,8 +188,8 @@ const HomePage: React.FC = () => {
       </Grid>
 
       {/* Recent Data */}
-      <Grid container spacing={3}>
-        <Grid>
+      <Grid container spacing={3} sx={{ mt: 4 }}>
+        <Grid size={{xs: 12, md: 6}}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -221,7 +221,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid>
+        <Grid size={{xs: 12, md: 6}}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>

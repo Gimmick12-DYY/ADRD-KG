@@ -8,6 +8,9 @@ import {
   Box,
   Alert,
   CircularProgress,
+  Chip,
+  Paper,
+  Divider,
 } from '@mui/material';
 import {
   BarChart,
@@ -23,10 +26,34 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
+  ScatterChart,
+  Scatter,
 } from 'recharts';
 import { apiService, type AnalyticsOverview } from '../services/api';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
+// Enhanced color palette with better contrast and accessibility
+const COLORS = [
+  '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#00BCD4', '#009688',
+  '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800',
+  '#FF5722', '#E91E63', '#9E9E9E', '#607D8B'
+];
+
+// Custom tooltip component
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <Paper sx={{ p: 2, bgcolor: 'background.paper', boxShadow: 3 }}>
+        <Typography variant="body2" color="text.primary">
+          {label}
+        </Typography>
+        <Typography variant="body2" color="primary">
+          Count: {payload[0].value}
+        </Typography>
+      </Paper>
+    );
+  }
+  return null;
+};
 
 const AnalyticsPage: React.FC = () => {
   const [analytics, setAnalytics] = useState<AnalyticsOverview | null>(null);
@@ -82,228 +109,197 @@ const AnalyticsPage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          📈 Analytics Dashboard
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      {/* Header */}
+      <Box sx={{ mb: 4, textAlign: 'center' }}>
+        <Typography variant="h3" component="h1" gutterBottom sx={{ 
+          fontWeight: 'bold',
+          background: 'linear-gradient(45deg, #9C27B0, #673AB7)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        }}>
+          Analytics Dashboard
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
           Comprehensive overview of ADRD research data
         </Typography>
+        <Divider sx={{ my: 2 }} />
       </Box>
 
-      {/* Overview Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h4" component="div" color="primary">
-                {analytics.overview.total_datasets}
-              </Typography>
-              <Typography color="text.secondary">
-                Total Datasets
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h4" component="div" color="secondary">
-                {analytics.overview.total_publications}
-              </Typography>
-              <Typography color="text.secondary">
-                Total Publications
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
 
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h4" component="div" color="success.main">
-                {Math.round(analytics.overview.avg_sample_size).toLocaleString()}
-              </Typography>
-              <Typography color="text.secondary">
-                Avg Sample Size
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h4" component="div" color="info.main">
-                {analytics.overview.max_sample_size.toLocaleString()}
-              </Typography>
-              <Typography color="text.secondary">
-                Max Sample Size
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Charts */}
-      <Grid container spacing={3}>
-        {/* Disease Distribution */}
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+      {/* Enhanced Charts Section - Bigger and Better Aligned */}
+      <Grid container spacing={4} justifyContent="center">
+        {/* Disease Distribution - Full width, bigger */}
+        <Grid size={{xs: 12}}>
+          <Card sx={{ height: '100%', boxShadow: 4, borderRadius: 3 }}>
+            <CardContent sx={{ p: 4 }}>
+              <Typography variant="h4" gutterBottom sx={{ 
+                fontWeight: 'bold', 
+                color: 'primary.main', 
+                textAlign: 'center',
+                mb: 4
+              }}>
                 Disease Type Distribution
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={analytics.disease_distribution}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ disease_type, count }) => `${disease_type}: ${count}`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="count"
-                  >
-                    {analytics.disease_distribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <Box sx={{ height: 600, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={analytics.disease_distribution.slice(0, 10)} // Show top 10
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={180}
+                      fill="#8884d8"
+                      dataKey="count"
+                      label={({ disease_type, count }) => 
+                        `${disease_type.length > 20 ? disease_type.substring(0, 20) + '...' : disease_type}: ${count}`
+                      }
+                    >
+                      {analytics.disease_distribution.slice(0, 10).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={<CustomTooltip />}
+                      wrapperStyle={{ fontSize: '14px' }}
+                    />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={60}
+                      iconType="circle"
+                      formatter={(value, entry) => (
+                        <span style={{ 
+                          color: entry.color, 
+                          fontSize: '14px',
+                          fontWeight: 'bold'
+                        }}>
+                          {value.length > 25 ? value.substring(0, 25) + '...' : value}
+                        </span>
+                      )}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+              {analytics.disease_distribution.length > 10 && (
+                <Box sx={{ mt: 3, textAlign: 'center' }}>
+                  <Chip 
+                    label={`+${analytics.disease_distribution.length - 10} more disease types`}
+                    color="secondary"
+                    variant="outlined"
+                    sx={{ fontSize: '14px', fontWeight: 'bold' }}
+                  />
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Publication Years */}
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Publications by Year
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={analytics.publication_years.slice(0, 10)}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Data Accessibility */}
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+        {/* Data Accessibility - Full width, bigger */}
+        <Grid size={{xs: 12}}>
+          <Card sx={{ height: '100%', boxShadow: 4, borderRadius: 3 }}>
+            <CardContent sx={{ p: 4 }}>
+              <Typography variant="h4" gutterBottom sx={{ 
+                fontWeight: 'bold', 
+                color: 'primary.main', 
+                textAlign: 'center',
+                mb: 4
+              }}>
                 Data Accessibility
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={analytics.data_accessibility}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="accessibility" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
+              <Box sx={{ height: 600, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={analytics.data_accessibility} margin={{ top: 40, right: 50, left: 40, bottom: 100 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="accessibility" 
+                      angle={-45}
+                      textAnchor="end"
+                      height={120}
+                      fontSize={14}
+                      fontWeight="bold"
+                    />
+                    <YAxis fontSize={14} fontWeight="bold" />
+                    <Tooltip 
+                      content={<CustomTooltip />}
+                      wrapperStyle={{ fontSize: '14px' }}
+                    />
+                    <Bar 
+                      dataKey="count" 
+                      fill="url(#colorGradient)"
+                      radius={[6, 6, 0, 0]}
+                    />
+                    <defs>
+                      <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#9C27B0" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#673AB7" stopOpacity={0.8}/>
+                      </linearGradient>
+                    </defs>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        {/* WGS Availability */}
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+        {/* WGS Availability - Full width, bigger */}
+        <Grid size={{xs: 12}}>
+          <Card sx={{ height: '100%', boxShadow: 4, borderRadius: 3 }}>
+            <CardContent sx={{ p: 4 }}>
+              <Typography variant="h4" gutterBottom sx={{ 
+                fontWeight: 'bold', 
+                color: 'primary.main', 
+                textAlign: 'center',
+                mb: 4
+              }}>
                 WGS Data Availability
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={analytics.wgs_availability}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ availability, count }) => `${availability}: ${count}`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="count"
-                  >
-                    {analytics.wgs_availability.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <Box sx={{ height: 600, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={analytics.wgs_availability}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={180}
+                      fill="#8884d8"
+                      dataKey="count"
+                      label={({ availability, count }) => 
+                        `${availability.length > 20 ? availability.substring(0, 20) + '...' : availability}: ${count}`
+                      }
+                    >
+                      {analytics.wgs_availability.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={<CustomTooltip />}
+                      wrapperStyle={{ fontSize: '14px' }}
+                    />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={60}
+                      iconType="circle"
+                      formatter={(value, entry) => (
+                        <span style={{ 
+                          color: entry.color, 
+                          fontSize: '14px',
+                          fontWeight: 'bold'
+                        }}>
+                          {value.length > 25 ? value.substring(0, 25) + '...' : value}
+                        </span>
+                      )}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
 
-      {/* Summary Statistics */}
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Summary Statistics
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid>
-                  <Box sx={{ textAlign: 'center', p: 2 }}>
-                    <Typography variant="h5" color="primary">
-                      {analytics.overview.min_sample_size.toLocaleString()}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Min Sample Size
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid>
-                  <Box sx={{ textAlign: 'center', p: 2 }}>
-                    <Typography variant="h5" color="secondary">
-                      {analytics.disease_distribution.length}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Disease Types
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid>
-                  <Box sx={{ textAlign: 'center', p: 2 }}>
-                    <Typography variant="h5" color="success.main">
-                      {analytics.publication_years.length}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Publication Years
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid>
-                  <Box sx={{ textAlign: 'center', p: 2 }}>
-                    <Typography variant="h5" color="info.main">
-                      {analytics.data_accessibility.length}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Access Types
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
     </Container>
   );
 };
