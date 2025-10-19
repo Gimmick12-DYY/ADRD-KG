@@ -1,6 +1,6 @@
 """
 Django settings for ADRD Knowledge Graph API
-Optimized for Vercel serverless deployment
+Minimal configuration for Vercel serverless deployment
 """
 import os
 
@@ -12,7 +12,7 @@ SECRET_KEY = 'django-insecure-vercel-deployment-key-2024'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
-# Application definition
+# Application definition - Minimal apps only
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
@@ -22,10 +22,18 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# CORS settings - Allow all
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+
 ROOT_URLCONF = 'urls_root'
+
+# Templates - minimal configuration
+TEMPLATES = []
 
 # Database - SQLite in /tmp for Vercel
 DATABASES = {
@@ -39,35 +47,16 @@ DATABASES = {
 STATIC_URL = '/static/'
 STATIC_ROOT = '/tmp/static'
 
-# CORS settings - Allow all
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']
-CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-USE_I18N = True
+USE_I18N = False
 USE_TZ = True
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-}
+# Disable logging configuration to avoid module errors
+LOGGING_CONFIG = None
 
 print("✓ Django settings loaded for Vercel")
-
