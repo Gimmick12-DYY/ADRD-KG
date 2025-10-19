@@ -63,23 +63,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = '/tmp/media/'  # Temporary directory on Vercel
 
 # CORS settings for Vercel
-CORS_ALLOWED_ORIGINS = [
-    "https://*.vercel.app",
-    "https://*.now.sh",
-    "http://localhost:3000",
-    "http://localhost:5173",
-]
+# Allow all origins for now - can be restricted later
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
-# Add custom domain CORS if provided
-if CUSTOM_DOMAIN:
-    CORS_ALLOWED_ORIGINS.extend([
-        f"https://{CUSTOM_DOMAIN}",
-        f"https://www.{CUSTOM_DOMAIN}",
-        f"http://{CUSTOM_DOMAIN}",
-        f"http://www.{CUSTOM_DOMAIN}"
-    ])
-
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only in development
+# If you want to restrict origins in production, use regex patterns:
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"^https://.*\.vercel\.app$",
+#     r"^https://.*\.now\.sh$",
+# ]
 
 # Security settings for production
 if not DEBUG:
