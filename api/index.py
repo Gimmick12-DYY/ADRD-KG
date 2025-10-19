@@ -21,7 +21,6 @@ if not settings.configured:
         ALLOWED_HOSTS=['*'],
         INSTALLED_APPS=[
             'django.contrib.contenttypes',
-            'api',  # Our API app
         ],
         DATABASES={
             'default': {
@@ -48,6 +47,32 @@ if not settings.configured:
 # Setup apps
 if not apps.ready:
     apps.populate(settings.INSTALLED_APPS)
+
+# Manually register our models with Django
+try:
+    import models
+    from django.apps.registry import Apps
+    from django.apps.config import AppConfig
+    
+    # Create a simple app config
+    class ApiAppConfig(AppConfig):
+        name = 'api'
+        label = 'api'
+        verbose_name = 'API'
+    
+    # Register the app if not already registered
+    if not apps.is_installed('api'):
+        api_config = ApiAppConfig('api', models)
+        apps.all_models['api'] = {}
+        apps.app_configs['api'] = api_config
+        
+        # Register models
+        apps.all_models['api']['dataset'] = models.Dataset
+        apps.all_models['api']['publication'] = models.Publication
+        
+        print("✓ Models registered with Django")
+except Exception as e:
+    print(f"Warning: Could not register models: {e}")
 
 # Initialize database
 def init_database():
