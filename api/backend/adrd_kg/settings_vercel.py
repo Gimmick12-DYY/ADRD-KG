@@ -13,16 +13,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'vercel-development-key-change-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = True  # Temporarily enable for testing
 
 # Vercel deployment settings
-ALLOWED_HOSTS = [
-    '.vercel.app',
-    '.now.sh',
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0'
-]
+ALLOWED_HOSTS = ['*']  # Allow all hosts temporarily for debugging
 
 # Add custom domain if provided
 CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN')
@@ -92,9 +86,18 @@ SESSION_COOKIE_AGE = 86400  # 24 hours
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
-# CSRF settings
-CSRF_COOKIE_HTTPONLY = True
+# CSRF settings - Disable for API endpoints
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF token
 CSRF_COOKIE_SAMESITE = 'Lax'
+# Exempt API views from CSRF (they're read-only GET endpoints)
+CSRF_COOKIE_SECURE = not DEBUG
+# Add your Vercel domain to trusted origins
+CSRF_TRUSTED_ORIGINS = []
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://adrd-knowledge-graph-git-main-yuyang-dengs-projects.vercel.app',
+        'https://adrd-knowledge-graph-mizelh4ig-yuyang-dengs-projects.vercel.app',
+    ]
 
 # Disable Django's built-in static file serving in production
 if not DEBUG:
