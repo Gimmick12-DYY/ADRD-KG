@@ -62,9 +62,9 @@ init_database()
 # Import Django WSGI application
 from django.core.wsgi import get_wsgi_application
 
-# Initialize Django WSGI application
+# Create the WSGI application
 app = get_wsgi_application()
 
-# Export for Vercel
-# Vercel expects either 'app' or 'application' as the WSGI callable
+# Vercel expects a function or WSGI app
+# Export both for compatibility
 application = app
