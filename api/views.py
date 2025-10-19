@@ -7,7 +7,9 @@ from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
 from django.db.models import Q
 import csv
-from .models import Dataset, Publication
+import models
+Dataset = models.Dataset
+Publication = models.Publication
 
 
 @require_http_methods(["GET"])

@@ -21,6 +21,7 @@ if not settings.configured:
         ALLOWED_HOSTS=['*'],
         INSTALLED_APPS=[
             'django.contrib.contenttypes',
+            'api',  # Our API app
         ],
         DATABASES={
             'default': {

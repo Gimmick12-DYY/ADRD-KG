@@ -17,6 +17,7 @@ class Dataset(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        app_label = 'api'
         db_table = 'api_dataset'
         ordering = ['-created_at']
 
@@ -36,6 +37,7 @@ class Publication(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        app_label = 'api'
         db_table = 'api_publication'
         ordering = ['-year', '-created_at']
 
