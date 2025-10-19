@@ -148,9 +148,11 @@ const AnalyticsPage: React.FC = () => {
                       outerRadius={180}
                       fill="#8884d8"
                       dataKey="count"
-                      label={({ disease_type, count }) => 
-                        `${disease_type.length > 20 ? disease_type.substring(0, 20) + '...' : disease_type}: ${count}`
-                      }
+                      label={(entry: any) => {
+                        const disease_type = entry.disease_type;
+                        const count = entry.count;
+                        return `${disease_type.length > 20 ? disease_type.substring(0, 20) + '...' : disease_type}: ${count}`;
+                      }}
                     >
                       {analytics.disease_distribution.slice(0, 10).map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -164,9 +166,8 @@ const AnalyticsPage: React.FC = () => {
                       verticalAlign="bottom" 
                       height={60}
                       iconType="circle"
-                      formatter={(value, entry) => (
+                      formatter={(value: any) => (
                         <span style={{ 
-                          color: entry.color, 
                           fontSize: '14px',
                           fontWeight: 'bold'
                         }}>
@@ -261,9 +262,11 @@ const AnalyticsPage: React.FC = () => {
                       outerRadius={180}
                       fill="#8884d8"
                       dataKey="count"
-                      label={({ availability, count }) => 
-                        `${availability.length > 20 ? availability.substring(0, 20) + '...' : availability}: ${count}`
-                      }
+                      label={(entry: any) => {
+                        const availability = entry.availability;
+                        const count = entry.count;
+                        return `${availability.length > 20 ? availability.substring(0, 20) + '...' : availability}: ${count}`;
+                      }}
                     >
                       {analytics.wgs_availability.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -277,9 +280,8 @@ const AnalyticsPage: React.FC = () => {
                       verticalAlign="bottom" 
                       height={60}
                       iconType="circle"
-                      formatter={(value, entry) => (
+                      formatter={(value: any) => (
                         <span style={{ 
-                          color: entry.color, 
                           fontSize: '14px',
                           fontWeight: 'bold'
                         }}>
