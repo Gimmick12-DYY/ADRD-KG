@@ -19,6 +19,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   PieChart,
   Pie,
   Cell,
@@ -154,7 +155,7 @@ const AnalyticsPage: React.FC = () => {
                         return `${disease_type.length > 20 ? disease_type.substring(0, 20) + '...' : disease_type}: ${count}`;
                       }}
                     >
-                      {analytics.disease_distribution.slice(0, 10).map((entry, index) => (
+                      {analytics.disease_distribution.slice(0, 10).map((_entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -268,7 +269,7 @@ const AnalyticsPage: React.FC = () => {
                         return `${availability.length > 20 ? availability.substring(0, 20) + '...' : availability}: ${count}`;
                       }}
                     >
-                      {analytics.wgs_availability.map((entry, index) => (
+                      {analytics.wgs_availability.map((_entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>

@@ -12,16 +12,16 @@ sys.path.insert(0, str(backend_dir))
 # Set Django settings
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'adrd_kg.settings_vercel')
 
-# Import Django application
+# Import and configure Django
 import django
 django.setup()
 
-from django.core.handlers.wsgi import WSGIHandler
-from django.http import HttpResponse
+# Import Django WSGI application
+from django.core.wsgi import get_wsgi_application
 
-# Create WSGI application
-application = WSGIHandler()
+# Initialize Django WSGI application
+app = get_wsgi_application()
 
-def handler(request, context):
-    """Vercel serverless function handler"""
-    return application(request, context)
+# Export for Vercel
+# Vercel expects either 'app' or 'application' as the WSGI callable
+application = app
