@@ -16,30 +16,35 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'adrd_kg.settings_vercel')
 import django
 django.setup()
 
-# Run migrations and load sample data
-from django.core.management import call_command
-from django.db import connection
+# Import Django WSGI application
+from django.core.wsgi import get_wsgi_application
 
-def init_database():
+# Create the WSGI application
+app = get_wsgi_application()
+
+# Vercel expects a function or WSGI app
+# Export both for compatibility
+application = app
+
+# Initialize database in background (don't block initial requests)
+def _init_db():
     """Initialize database with migrations and sample data"""
     try:
-        # Check if database tables exist
+        from django.core.management import call_command
+        from django.db import connection
+        
+        # Check if tables exist
         with connection.cursor() as cursor:
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
             tables = cursor.fetchall()
         
-        # If no tables exist, run migrations and load data
+        # Run migrations if needed
         if not tables or len(tables) < 3:
-            print("Initializing database...")
-            call_command('migrate', '--noinput')
+            print("Running migrations...")
+            call_command('migrate', '--noinput', verbosity=0)
             
-            # Load sample data if available
+            # Create sample data
             try:
-                call_command('load_sample_data')
-                print("Sample data loaded successfully")
-            except Exception as e:
-                print(f"Could not load sample data: {e}")
-                # Create minimal sample data
                 from api.models import Dataset, Publication
                 if not Dataset.objects.exists():
                     Dataset.objects.create(
@@ -52,19 +57,23 @@ def init_database():
                         imaging_types="MRI, PET",
                         modalities="MRI, PET, Clinical"
                     )
-                    print("Created sample dataset")
+                    Publication.objects.create(
+                        title="Sample Publication",
+                        authors="Sample Authors",
+                        journal="Sample Journal",
+                        year=2023,
+                        pmid="12345678",
+                        doi="10.1234/sample",
+                        dataset_name="Sample ADRD Dataset"
+                    )
+                    print("Sample data created")
+            except Exception as e:
+                print(f"Sample data error: {e}")
     except Exception as e:
-        print(f"Database initialization error: {e}")
+        print(f"DB init error: {e}")
 
-# Initialize database on first run
-init_database()
-
-# Import Django WSGI application
-from django.core.wsgi import get_wsgi_application
-
-# Create the WSGI application
-app = get_wsgi_application()
-
-# Vercel expects a function or WSGI app
-# Export both for compatibility
-application = app
+# Try to initialize database
+try:
+    _init_db()
+except:
+    pass  # Don't crash if DB init fails
