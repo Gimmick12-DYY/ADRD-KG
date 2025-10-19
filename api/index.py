@@ -16,7 +16,7 @@ from django.apps import apps
 # Force settings configuration
 if not settings.configured:
     settings.configure(
-        DEBUG=True,
+        DEBUG=False,  # Disable debug mode to prevent detailed error pages
         SECRET_KEY='django-insecure-vercel-key-2024',
         ALLOWED_HOSTS=['*'],
         INSTALLED_APPS=[
@@ -28,10 +28,20 @@ if not settings.configured:
                 'NAME': '/tmp/adrd_kg.db',
             }
         },
-        MIDDLEWARE=[],
+        MIDDLEWARE=[
+            'django.middleware.common.CommonMiddleware',
+        ],
         ROOT_URLCONF='urls_root',
         USE_TZ=True,
         DEFAULT_AUTO_FIELD='django.db.models.BigAutoField',
+        # Add logging to see actual errors
+        LOGGING={
+            'version': 1,
+            'handlers': {
+                'console': {'class': 'logging.StreamHandler'},
+            },
+            'root': {'handlers': ['console'], 'level': 'INFO'},
+        },
     )
 
 # Setup apps
