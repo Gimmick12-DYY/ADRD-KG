@@ -70,3 +70,6 @@ start.sh
 # Backup files
 *.backup
 backend/app_flask_backup.py
+
+# Old backend directory (now using api/backend)
+backend/
