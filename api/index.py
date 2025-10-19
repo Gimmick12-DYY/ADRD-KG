@@ -1,56 +1,41 @@
 """
-Vercel Serverless Function for Django API
-References backend from parent directory
+Vercel entry point for Django API
 """
 import os
 import sys
 from pathlib import Path
 
-# Setup paths - backend is in parent directory
-current_dir = Path(__file__).parent
-backend_dir = current_dir.parent / 'backend'
-sys.path.insert(0, str(backend_dir))
+# Add api directory to Python path
+sys.path.insert(0, str(Path(__file__).parent))
 
-# Configure Django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'adrd_kg.settings_vercel')
+# Set Django settings
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api.settings')
 
 # Initialize Django
 import django
 django.setup()
 
-# Import WSGI handler
-from django.core.handlers.wsgi import WSGIHandler
-
-# Create application instance
-application = WSGIHandler()
-
-# Initialize database on cold start
-_db_initialized = False
-
-def init_db():
-    """Initialize database with migrations and sample data"""
-    global _db_initialized
-    if _db_initialized:
-        return
+# Create tables and load sample data
+def init_database():
+    """Initialize database with tables and sample data"""
+    from django.core.management import call_command
+    from django.db import connection
+    from api.models import Dataset, Publication
     
     try:
-        from django.core.management import call_command
-        from django.db import connection
-        
         # Check if tables exist
         with connection.cursor() as cursor:
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_dataset';")
-            result = cursor.fetchone()
+            table_exists = cursor.fetchone()
         
-        if not result:
-            print("Initializing database...")
-            call_command('migrate', '--noinput', verbosity=0)
+        if not table_exists:
+            print("Creating database tables...")
+            call_command('migrate', '--run-syncdb', verbosity=0)
             
             # Create sample data
-            from api.models import Dataset, Publication
-            
             if not Dataset.objects.exists():
-                # Create sample datasets
+                print("Loading sample data...")
+                
                 datasets = [
                     Dataset(
                         name="Alzheimer's Disease Neuroimaging Initiative (ADNI)",
@@ -85,7 +70,6 @@ def init_db():
                 ]
                 Dataset.objects.bulk_create(datasets)
                 
-                # Create sample publications
                 publications = [
                     Publication(
                         title="Imaging and biomarkers in Alzheimer's disease",
@@ -117,20 +101,17 @@ def init_db():
                 ]
                 Publication.objects.bulk_create(publications)
                 
-                print(f"Created {len(datasets)} datasets and {len(publications)} publications")
-        
-        _db_initialized = True
-        print("Database initialized successfully")
-        
+                print(f"✓ Created {len(datasets)} datasets and {len(publications)} publications")
     except Exception as e:
-        print(f"Database initialization warning: {e}")
-        # Don't crash on DB errors
+        print(f"Database init warning: {e}")
 
-# Try to initialize database
-try:
-    init_db()
-except Exception as e:
-    print(f"DB init error (will retry on first request): {e}")
+# Initialize database
+init_database()
+
+# Get WSGI application
+from django.core.handlers.wsgi import WSGIHandler
+application = WSGIHandler()
 
 # Export for Vercel
 app = application
+
