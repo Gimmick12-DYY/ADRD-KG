@@ -1,13 +1,14 @@
 """
-Vercel Serverless Function for Django API - Clean Implementation
+Vercel Serverless Function for Django API
+References backend from parent directory
 """
 import os
 import sys
 from pathlib import Path
 
-# Setup paths
+# Setup paths - backend is in parent directory
 current_dir = Path(__file__).parent
-backend_dir = current_dir / 'backend'
+backend_dir = current_dir.parent / 'backend'
 sys.path.insert(0, str(backend_dir))
 
 # Configure Django

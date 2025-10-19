@@ -71,6 +71,5 @@ start.sh
 *.backup
 backend/app_flask_backup.py
 
-# Old backend directory (now using api/backend)
-# Keep excluding the root-level backend folder, but DO NOT exclude api/backend
-/backend/
+# Exclude duplicate backend in api folder (we use root backend/)
+api/backend/
