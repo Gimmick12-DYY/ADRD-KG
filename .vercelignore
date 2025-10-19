@@ -1,16 +1,72 @@
-backend/
-backend/**
-.git/
-.github/
-*.md
-!README.md
-node_modules/
-venv/
+# Python
 __pycache__/
-*.pyc
-*.db
-*.sqlite3
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+build/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+instance/
+staticfiles/
+media/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
 .env
 .env.local
-logs/
-data/
+.env.*.local
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Git
+.git/
+.gitignore
+
+# Documentation (keep deployment docs though)
+README.md
+
+# Data files
+*.csv
+*.xlsx
+penguins.csv
+pubmed_refs_fetched.csv
+ADRD_Metadata_Sample*.xlsx
+
+# Docker (not needed for Vercel)
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Deployment configs for other platforms
+railway.toml
+heroku.yml
+nginx.conf
+start.sh
+
+# Backup files
+*.backup
+backend/app_flask_backup.py
