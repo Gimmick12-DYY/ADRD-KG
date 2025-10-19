@@ -8,10 +8,8 @@ from pathlib import Path
 # Add api directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-# Manually configure Django settings without calling setup()
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-
 # Import Django and configure manually
+# DO NOT set DJANGO_SETTINGS_MODULE - we'll configure directly
 from django.conf import settings
 from django.apps import apps
 
