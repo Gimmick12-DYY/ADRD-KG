@@ -13,11 +13,9 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  Divider,
 } from '@mui/material';
 import {
   CloudUpload,
-  Description,
   CheckCircle,
   Warning,
   Info,

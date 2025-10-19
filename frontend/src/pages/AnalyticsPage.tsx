@@ -19,15 +19,10 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
-  LineChart,
-  Line,
-  ScatterChart,
-  Scatter,
 } from 'recharts';
 import { apiService, type AnalyticsOverview } from '../services/api';
 
