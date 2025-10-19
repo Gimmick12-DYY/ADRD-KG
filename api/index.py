@@ -9,7 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Set Django settings
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 
 # Initialize Django
 import django
@@ -20,7 +20,7 @@ def init_database():
     """Initialize database with tables and sample data"""
     from django.core.management import call_command
     from django.db import connection
-    from api.models import Dataset, Publication
+    from models import Dataset, Publication
     
     try:
         # Check if tables exist
