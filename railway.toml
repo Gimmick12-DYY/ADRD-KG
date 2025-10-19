@@ -1,0 +1,42 @@
+# Railway deployment configuration for ADRD Knowledge Graph
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.backend"
+
+[deploy]
+healthcheckPath = "/api/health/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[[services]]
+name = "backend"
+source = "."
+dockerfile = "Dockerfile.backend"
+
+[services.variables]
+DJANGO_SETTINGS_MODULE = "adrd_kg.settings_production"
+DEBUG = "False"
+PORT = "8000"
+
+[[services]]
+name = "frontend"
+source = "."
+dockerfile = "Dockerfile.frontend"
+
+[services.variables]
+PORT = "80"
+
+[[services]]
+name = "postgres"
+image = "postgres:15-alpine"
+
+[services.variables]
+POSTGRES_DB = "adrd_kg"
+POSTGRES_USER = "adrd_user"
+POSTGRES_PASSWORD = { value = "${{ secrets.POSTGRES_PASSWORD }}" }
+
+[[services]]
+name = "redis"
+image = "redis:7-alpine"

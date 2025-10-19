@@ -1,0 +1,16 @@
+# Heroku deployment configuration for ADRD Knowledge Graph
+build:
+  docker:
+    web: Dockerfile.backend
+  config:
+    DJANGO_SETTINGS_MODULE: adrd_kg.settings_production
+
+release:
+  image: web
+  command:
+    - python manage.py migrate --noinput
+    - python manage.py collectstatic --noinput
+    - python manage.py load_sample_data
+
+run:
+  web: gunicorn adrd_kg.wsgi:application --bind 0.0.0.0:$PORT --workers 3

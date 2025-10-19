@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "name": "adrd-knowledge-graph",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    },
+    {
+      "src": "backend/manage.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/vercel_app.py"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "backend/vercel_app.py"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "backend/vercel_app.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/index.html"
+    }
+  ],
+  "env": {
+    "DJANGO_SETTINGS_MODULE": "adrd_kg.settings_vercel",
+    "PYTHONPATH": "backend"
+  },
+  "build": {
+    "env": {
+      "DJANGO_SETTINGS_MODULE": "adrd_kg.settings_vercel",
+      "PYTHONPATH": "backend"
+    }
+  },
+  "functions": {
+    "backend/vercel_app.py": {
+      "runtime": "@vercel/python@3.9"
+    }
+  },
+  "regions": ["iad1"],
+  "github": {
+    "autoAlias": false
+  }
+}

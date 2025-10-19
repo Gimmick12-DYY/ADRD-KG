@@ -1,6 +1,22 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+// API Base URL configuration for different deployment environments
+const getApiBaseUrl = () => {
+  // Check if we're in development mode
+  if (import.meta.env.DEV) {
+    return 'http://localhost:8000/api';
+  }
+  
+  // Check for custom API URL (for GitHub Pages + external backend)
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  
+  // Default to relative URL (for same-origin deployments like Vercel)
+  return '/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,

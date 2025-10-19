@@ -3,6 +3,10 @@ Django==4.2.7
 djangorestframework==3.14.0
 django-cors-headers==4.3.1
 
+# Database
+psycopg2-binary==2.9.9  # PostgreSQL adapter
+dj-database-url==2.1.0  # Database URL parsing
+
 # Data processing
 pandas==2.3.3
 openpyxl==3.1.5
@@ -10,6 +14,19 @@ openpyxl==3.1.5
 # Development
 python-dotenv==1.0.0
 
-# Production (optional)
+# Production
 gunicorn==21.2.0
 whitenoise==6.6.0
+
+# Caching and Performance
+redis==5.0.1
+django-redis==5.4.0
+
+# Monitoring and Logging
+sentry-sdk==1.38.0
+
+# Security
+django-ratelimit==4.1.0
+
+# Health checks
+django-health-check==3.17.0
