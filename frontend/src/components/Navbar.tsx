@@ -12,6 +12,7 @@ import {
   Article,
   CloudUpload,
   Analytics,
+  Psychology,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -30,13 +31,16 @@ const Navbar: React.FC = () => {
   return (
     <AppBar position="fixed" elevation={2} sx={{ width: '100%', top: 0, left: 0, right: 0 }}>
       <Toolbar sx={{ px: 2 }}>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ fontWeight: 'bold', mr: 'auto' }}
-        >
-          ADRD INFO ATLAS
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mr: 'auto' }}>
+          <Psychology sx={{ mr: 1, fontSize: '1.5rem' }} />
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: 'bold' }}
+          >
+            ADRD INFO ATLAS
+          </Typography>
+        </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           {menuItems.map((item) => (
             <Button
