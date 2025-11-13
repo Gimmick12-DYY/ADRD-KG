@@ -69,6 +69,8 @@ try:
         # Register models
         apps.all_models['api']['dataset'] = models.Dataset
         apps.all_models['api']['publication'] = models.Publication
+        apps.all_models['api']['pendingupload'] = models.PendingUpload
+        apps.all_models['api']['adminuser'] = models.AdminUser
         
         print("✓ Models registered with Django")
 except Exception as e:
@@ -93,6 +95,8 @@ def init_database():
             with connection.schema_editor() as schema_editor:
                 schema_editor.create_model(Dataset)
                 schema_editor.create_model(Publication)
+                schema_editor.create_model(models.PendingUpload)
+                schema_editor.create_model(models.AdminUser)
             
             # Create sample data
             datasets = [

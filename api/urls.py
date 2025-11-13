@@ -40,5 +40,27 @@ urlpatterns = [
     path('filters/', views.get_filters),
     path('analytics/overview', views.get_analytics_overview),
     path('analytics/overview/', views.get_analytics_overview),
+    
+    # Authentication
+    path('auth/login', views.admin_login),
+    path('auth/login/', views.admin_login),
+    path('auth/logout', views.admin_logout),
+    path('auth/logout/', views.admin_logout),
+    path('auth/check', views.check_auth),
+    path('auth/check/', views.check_auth),
+    
+    # File upload
+    path('upload', views.upload_file),
+    path('upload/', views.upload_file),
+    
+    # Management
+    path('management/pending', views.get_pending_uploads),
+    path('management/pending/', views.get_pending_uploads),
+    path('management/pending/<int:upload_id>', views.get_pending_upload_detail),
+    path('management/pending/<int:upload_id>/', views.get_pending_upload_detail),
+    path('management/pending/<int:upload_id>/approve', views.approve_upload),
+    path('management/pending/<int:upload_id>/approve/', views.approve_upload),
+    path('management/pending/<int:upload_id>/reject', views.reject_upload),
+    path('management/pending/<int:upload_id>/reject/', views.reject_upload),
 ]
 

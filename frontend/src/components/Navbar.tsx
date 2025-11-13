@@ -13,12 +13,15 @@ import {
   CloudUpload,
   Analytics,
   Psychology,
+  AdminPanelSettings,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { authService } from '../services/auth';
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const isAuthenticated = authService.isAuthenticated();
 
   const menuItems = [
     { label: 'Home', path: '/', icon: <Home /> },
@@ -27,6 +30,10 @@ const Navbar: React.FC = () => {
     { label: 'Contribute', path: '/contribute', icon: <CloudUpload /> },
     { label: 'Analytics', path: '/analytics', icon: <Analytics /> },
   ];
+
+  if (isAuthenticated) {
+    menuItems.push({ label: 'Management', path: '/management', icon: <AdminPanelSettings /> });
+  }
 
   return (
     <AppBar position="fixed" elevation={2} sx={{ width: '100%', top: 0, left: 0, right: 0 }}>

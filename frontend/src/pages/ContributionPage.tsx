@@ -42,15 +42,17 @@ const ContributionPage: React.FC = () => {
     setUploadStatus('uploading');
     
     try {
-      // Here you would typically send the file to your backend
-      // For now, we'll simulate the upload
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Import apiService
+      const { apiService } = await import('../services/api');
+      
+      // Upload file to backend
+      const result = await apiService.uploadFile(file, '');
       
       setUploadStatus('success');
-      setUploadMessage('File uploaded successfully! Thank you for your contribution.');
-    } catch (error) {
+      setUploadMessage('File uploaded successfully! Your submission is pending review by an administrator.');
+    } catch (error: any) {
       setUploadStatus('error');
-      setUploadMessage('Upload failed. Please try again.');
+      setUploadMessage(error.message || 'Upload failed. Please try again.');
     }
   };
 

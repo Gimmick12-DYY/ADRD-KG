@@ -177,6 +177,63 @@ export const apiService = {
     const response = await api.get('/filters');
     return response.data;
   },
+
+  // Management endpoints
+  getPendingUploads: async (status: string = 'pending') => {
+    const response = await api.get('/management/pending', { params: { status } });
+    return response.data;
+  },
+
+  getPendingUploadDetail: async (uploadId: number) => {
+    const response = await api.get(`/management/pending/${uploadId}`);
+    return response.data;
+  },
+
+  approveUpload: async (uploadId: number, reviewNotes: string = '', reviewedBy: string = 'admin') => {
+    const response = await api.post(`/management/pending/${uploadId}/approve`, {
+      review_notes: reviewNotes,
+      reviewed_by: reviewedBy,
+    });
+    return response.data;
+  },
+
+  rejectUpload: async (uploadId: number, reviewNotes: string = '', reviewedBy: string = 'admin') => {
+    const response = await api.post(`/management/pending/${uploadId}/reject`, {
+      review_notes: reviewNotes,
+      reviewed_by: reviewedBy,
+    });
+    return response.data;
+  },
+
+  // File upload
+  uploadFile: async (file: File, uploadedBy: string = '') => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = async (e) => {
+        try {
+          const fileContent = e.target?.result as string;
+          const fileExtension = file.name.toLowerCase().split('.').pop() || 'csv';
+          
+          const response = await api.post('/upload', {
+            file_name: file.name,
+            file_content: fileContent,
+            file_type: fileExtension,
+            uploaded_by: uploadedBy,
+          });
+          
+          resolve(response.data);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      
+      reader.onerror = reject;
+      
+      // Read file as data URL (base64)
+      reader.readAsDataURL(file);
+    });
+  },
 };
 
 export default apiService;

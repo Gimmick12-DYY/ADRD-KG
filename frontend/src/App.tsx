@@ -4,11 +4,13 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box } from '@mui/material';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import DatasetsPage from './pages/DatasetsPage';
 import PublicationsPage from './pages/PublicationsPage';
 import ContributionPage from './pages/ContributionPage';
 import AnalyticsPage from './pages/AnalyticsPage';
+import ManagementPage from './pages/ManagementPage';
 import './App.css';
 
 const theme = createTheme({
@@ -41,7 +43,14 @@ function App() {
                 <Route path="/publications" element={<PublicationsPage />} />
                 <Route path="/contribute" element={<ContributionPage />} />
                 <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/management" element={<ManagementPage />} />
+                <Route
+                  path="/management"
+                  element={
+                    <ProtectedRoute>
+                      <ManagementPage />
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
             </Box>
           </Box>
