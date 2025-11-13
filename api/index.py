@@ -76,6 +76,27 @@ try:
 except Exception as e:
     print(f"Warning: Could not register models: {e}")
 
+# Initialize admin users
+def init_admin_users():
+    """Ensure initial admin users exist"""
+    try:
+        from models import AdminUser
+        
+        admin_users = [
+            {'username': 'Yuyang', 'password': 'Big-s2'},
+            {'username': 'Sara', 'password': 'Big-s2'},
+        ]
+        
+        for admin_data in admin_users:
+            if not AdminUser.objects.filter(username=admin_data['username']).exists():
+                AdminUser.objects.create(
+                    username=admin_data['username'],
+                    password_hash=AdminUser.hash_password(admin_data['password'])
+                )
+                print(f"✓ Created admin user: {admin_data['username']}")
+    except Exception as e:
+        print(f"Admin user init warning: {e}")
+
 # Initialize database
 def init_database():
     """Initialize database with tables and sample data"""
@@ -165,14 +186,24 @@ def init_database():
             Publication.objects.bulk_create(publications)
             
             print(f"✓ Created {len(datasets)} datasets and {len(publications)} publications")
+        
+        # Always ensure admin users exist (even if tables already existed)
+        init_admin_users()
     except Exception as e:
         print(f"DB init warning: {e}")
 
 # Initialize database
 try:
     init_database()
+    # Also ensure admin users exist (in case database was already initialized)
+    init_admin_users()
 except Exception as e:
     print(f"DB init error: {e}")
+    # Try to initialize admin users even if database init failed
+    try:
+        init_admin_users()
+    except:
+        pass
 
 # Get WSGI application
 from django.core.handlers.wsgi import WSGIHandler
