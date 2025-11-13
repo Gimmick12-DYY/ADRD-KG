@@ -72,6 +72,7 @@ const ManagementPage: React.FC = () => {
   const [reviewNotes, setReviewNotes] = useState('');
   const [processing, setProcessing] = useState(false);
   const [tabValue, setTabValue] = useState(0);
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const navigate = useNavigate();
 
   const username = authService.getUsername();
@@ -96,11 +97,31 @@ const ManagementPage: React.FC = () => {
 
   const handleViewDetail = async (uploadId: number) => {
     try {
+      setLoadingDetail(true);
+      setError(null);
+      setDetailDialogOpen(true); // Open dialog first to show loading state
+      console.log('Fetching upload detail for ID:', uploadId);
       const detail = await apiService.getPendingUploadDetail(uploadId);
+      console.log('Received detail:', detail);
+      
+      // Ensure file_content is parsed if it's a string
+      if (detail && detail.file_content) {
+        if (typeof detail.file_content === 'string') {
+          try {
+            detail.file_content = JSON.parse(detail.file_content);
+          } catch (e) {
+            console.warn('Could not parse file_content as JSON:', e);
+          }
+        }
+      }
+      
       setSelectedUpload(detail);
-      setDetailDialogOpen(true);
     } catch (err: any) {
+      console.error('Error fetching detail:', err);
       setError(err.message || 'Failed to fetch upload details');
+      setDetailDialogOpen(false); // Close dialog on error
+    } finally {
+      setLoadingDetail(false);
     }
   };
 
@@ -448,7 +469,10 @@ const ManagementPage: React.FC = () => {
       {/* Detail Dialog with Enhanced Preview */}
       <Dialog
         open={detailDialogOpen}
-        onClose={() => setDetailDialogOpen(false)}
+        onClose={() => {
+          setDetailDialogOpen(false);
+          setSelectedUpload(null);
+        }}
         maxWidth="xl"
         fullWidth
         PaperProps={{
@@ -456,6 +480,9 @@ const ManagementPage: React.FC = () => {
             borderRadius: 3,
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
             maxHeight: '90vh',
+            backgroundColor: '#ffffff',
+            display: 'flex',
+            flexDirection: 'column',
           },
         }}
       >
@@ -485,8 +512,16 @@ const ManagementPage: React.FC = () => {
             />
           )}
         </DialogTitle>
-        <DialogContent sx={{ p: 3 }}>
-          {selectedUpload && (
+        <DialogContent sx={{ p: 3, minHeight: 400, backgroundColor: '#ffffff', overflow: 'auto' }}>
+          {loadingDetail ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+              <CircularProgress size={48} sx={{ color: 'primary.main' }} />
+            </Box>
+          ) : !selectedUpload ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+              <Alert severity="warning">No data available for this upload.</Alert>
+            </Box>
+          ) : (
             <Box>
               {/* Metadata Section */}
               <Box
@@ -557,7 +592,7 @@ const ManagementPage: React.FC = () => {
               )}
 
               {/* Enhanced Dataset Preview */}
-              {selectedUpload.file_content && selectedUpload.file_content.length > 0 && (
+              {selectedUpload.file_content && Array.isArray(selectedUpload.file_content) && selectedUpload.file_content.length > 0 ? (
                 <Box sx={{ mt: 3 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
@@ -659,6 +694,23 @@ const ManagementPage: React.FC = () => {
                       />
                     </Box>
                   )}
+                </Box>
+              ) : selectedUpload.file_content ? (
+                <Box sx={{ mt: 3 }}>
+                  <Alert severity="info" sx={{ borderRadius: 2 }}>
+                    File content is available but in an unexpected format. Please check the backend data structure.
+                  </Alert>
+                  <Box sx={{ mt: 2, p: 2, background: 'rgba(0,0,0,0.02)', borderRadius: 2 }}>
+                    <Typography variant="caption" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                      {JSON.stringify(selectedUpload.file_content, null, 2).substring(0, 500)}...
+                    </Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <Box sx={{ mt: 3 }}>
+                  <Alert severity="warning" sx={{ borderRadius: 2 }}>
+                    No file content available for preview. The file may not have been processed correctly.
+                  </Alert>
                 </Box>
               )}
             </Box>
