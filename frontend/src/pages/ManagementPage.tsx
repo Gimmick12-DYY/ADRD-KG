@@ -149,30 +149,78 @@ const ManagementPage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Management Panel
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Review and manage pending file uploads
-          </Typography>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%)',
+        pb: 4,
+      }}
+    >
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            mb: 4,
+            mt: 2,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography
+              variant="h4"
+              component="h1"
+              gutterBottom
+              sx={{
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #7207ab 0%, #dc004e 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Management Panel
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Review and manage pending file uploads
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Chip
+              label={`Logged in as: ${username}`}
+              color="primary"
+              variant="outlined"
+              sx={{
+                fontWeight: 600,
+                borderWidth: 2,
+                '& .MuiChip-label': {
+                  px: 2,
+                },
+              }}
+            />
+            <Button
+              variant="outlined"
+              startIcon={<Logout />}
+              onClick={handleLogout}
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 600,
+                borderWidth: 2,
+                '&:hover': {
+                  borderWidth: 2,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                },
+                transition: 'all 0.3s ease',
+              }}
+            >
+              Logout
+            </Button>
+          </Box>
         </Box>
-        <Box>
-          <Typography variant="body2" sx={{ mr: 2, display: 'inline' }}>
-            Logged in as: <strong>{username}</strong>
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<Logout />}
-            onClick={handleLogout}
-            sx={{ ml: 2 }}
-          >
-            Logout
-          </Button>
-        </Box>
-      </Box>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
@@ -180,89 +228,212 @@ const ManagementPage: React.FC = () => {
         </Alert>
       )}
 
-      <Card>
-        <CardContent>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-            <Tabs value={tabValue} onChange={(_, newValue) => setTabValue(newValue)}>
+      <Card
+        elevation={8}
+        sx={{
+          borderRadius: 3,
+          overflow: 'hidden',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+        }}
+      >
+        <CardContent sx={{ p: 0 }}>
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              background: 'linear-gradient(90deg, rgba(114, 7, 171, 0.05) 0%, rgba(220, 0, 78, 0.05) 100%)',
+            }}
+          >
+            <Tabs
+              value={tabValue}
+              onChange={(_, newValue) => setTabValue(newValue)}
+              sx={{
+                '& .MuiTab-root': {
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  minHeight: 64,
+                  '&.Mui-selected': {
+                    color: 'primary.main',
+                  },
+                },
+                '& .MuiTabs-indicator': {
+                  height: 3,
+                  borderRadius: '3px 3px 0 0',
+                },
+              }}
+            >
               <Tab label={`Pending (${uploads.length})`} />
               <Tab label="Approved" />
               <Tab label="Rejected" />
             </Tabs>
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2, p: 2, pt: 3 }}>
             <Button
               startIcon={<Refresh />}
               onClick={fetchUploads}
               disabled={loading}
+              variant="outlined"
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 600,
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                },
+                transition: 'all 0.3s ease',
+              }}
             >
               Refresh
             </Button>
           </Box>
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <CircularProgress />
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 8 }}>
+              <CircularProgress size={48} sx={{ color: 'primary.main' }} />
             </Box>
           ) : uploads.length === 0 ? (
-            <Alert severity="info">No uploads found for this status.</Alert>
+            <Box sx={{ p: 4 }}>
+              <Alert
+                severity="info"
+                sx={{
+                  borderRadius: 2,
+                  '& .MuiAlert-icon': {
+                    fontSize: 28,
+                  },
+                }}
+              >
+                No uploads found for this status.
+              </Alert>
+            </Box>
           ) : (
-            <TableContainer component={Paper}>
+            <TableContainer
+              component={Paper}
+              elevation={0}
+              sx={{
+                borderRadius: 0,
+                '& .MuiTable-root': {
+                  minWidth: 650,
+                },
+              }}
+            >
               <Table>
                 <TableHead>
-                  <TableRow>
+                  <TableRow
+                    sx={{
+                      background: 'linear-gradient(90deg, rgba(114, 7, 171, 0.08) 0%, rgba(220, 0, 78, 0.08) 100%)',
+                      '& .MuiTableCell-head': {
+                        fontWeight: 700,
+                        fontSize: '0.95rem',
+                        color: 'text.primary',
+                        borderBottom: '2px solid',
+                        borderColor: 'divider',
+                      },
+                    }}
+                  >
                     <TableCell>File Name</TableCell>
                     <TableCell>Type</TableCell>
                     <TableCell>Uploaded By</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell>Created At</TableCell>
-                    <TableCell>Actions</TableCell>
+                    <TableCell align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {uploads.map((upload) => (
-                    <TableRow key={upload.id}>
-                      <TableCell>{upload.file_name}</TableCell>
+                  {uploads.map((upload, index) => (
+                    <TableRow
+                      key={upload.id}
+                      sx={{
+                        '&:hover': {
+                          background: 'rgba(114, 7, 171, 0.03)',
+                          transform: 'scale(1.001)',
+                          transition: 'all 0.2s ease',
+                        },
+                        '& .MuiTableCell-body': {
+                          borderBottom: index < uploads.length - 1 ? '1px solid' : 'none',
+                          borderColor: 'divider',
+                        },
+                      }}
+                    >
+                      <TableCell sx={{ fontWeight: 500 }}>{upload.file_name}</TableCell>
                       <TableCell>
-                        <Chip label={upload.file_type.toUpperCase()} size="small" />
+                        <Chip
+                          label={upload.file_type.toUpperCase()}
+                          size="small"
+                          sx={{
+                            fontWeight: 600,
+                            borderRadius: 1,
+                            background: 'rgba(114, 7, 171, 0.1)',
+                            color: 'primary.main',
+                          }}
+                        />
                       </TableCell>
                       <TableCell>{upload.uploaded_by || 'Anonymous'}</TableCell>
                       <TableCell>
                         <Chip
-                          label={upload.status}
+                          label={upload.status.charAt(0).toUpperCase() + upload.status.slice(1)}
                           color={getStatusColor(upload.status) as any}
                           size="small"
+                          sx={{
+                            fontWeight: 600,
+                            borderRadius: 1,
+                          }}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ color: 'text.secondary' }}>
                         {new Date(upload.created_at).toLocaleString()}
                       </TableCell>
-                      <TableCell>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleViewDetail(upload.id)}
-                          color="primary"
-                        >
-                          <Visibility />
-                        </IconButton>
-                        {upload.status === 'pending' && (
-                          <>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleReview(upload.id, 'approve')}
-                              color="success"
-                            >
-                              <CheckCircle />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleReview(upload.id, 'reject')}
-                              color="error"
-                            >
-                              <Cancel />
-                            </IconButton>
-                          </>
-                        )}
+                      <TableCell align="center">
+                        <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleViewDetail(upload.id)}
+                            color="primary"
+                            sx={{
+                              '&:hover': {
+                                background: 'rgba(114, 7, 171, 0.1)',
+                                transform: 'scale(1.1)',
+                              },
+                              transition: 'all 0.2s ease',
+                            }}
+                          >
+                            <Visibility />
+                          </IconButton>
+                          {upload.status === 'pending' && (
+                            <>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleReview(upload.id, 'approve')}
+                                color="success"
+                                sx={{
+                                  '&:hover': {
+                                    background: 'rgba(46, 125, 50, 0.1)',
+                                    transform: 'scale(1.1)',
+                                  },
+                                  transition: 'all 0.2s ease',
+                                }}
+                              >
+                                <CheckCircle />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleReview(upload.id, 'reject')}
+                                color="error"
+                                sx={{
+                                  '&:hover': {
+                                    background: 'rgba(211, 47, 47, 0.1)',
+                                    transform: 'scale(1.1)',
+                                  },
+                                  transition: 'all 0.2s ease',
+                                }}
+                              >
+                                <Cancel />
+                              </IconButton>
+                            </>
+                          )}
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -279,8 +450,22 @@ const ManagementPage: React.FC = () => {
         onClose={() => setDetailDialogOpen(false)}
         maxWidth="md"
         fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+          },
+        }}
       >
-        <DialogTitle>
+        <DialogTitle
+          sx={{
+            background: 'linear-gradient(90deg, rgba(114, 7, 171, 0.08) 0%, rgba(220, 0, 78, 0.08) 100%)',
+            fontWeight: 700,
+            fontSize: '1.25rem',
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
           Upload Details: {selectedUpload?.file_name}
         </DialogTitle>
         <DialogContent>
@@ -380,8 +565,25 @@ const ManagementPage: React.FC = () => {
         onClose={() => setReviewDialogOpen(false)}
         maxWidth="sm"
         fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+          },
+        }}
       >
-        <DialogTitle>
+        <DialogTitle
+          sx={{
+            background: reviewAction === 'approve'
+              ? 'linear-gradient(90deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.1) 100%)'
+              : 'linear-gradient(90deg, rgba(211, 47, 47, 0.1) 0%, rgba(244, 67, 54, 0.1) 100%)',
+            fontWeight: 700,
+            fontSize: '1.25rem',
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            color: reviewAction === 'approve' ? 'success.main' : 'error.main',
+          }}
+        >
           {reviewAction === 'approve' ? 'Approve' : 'Reject'} Upload
         </DialogTitle>
         <DialogContent>
@@ -396,20 +598,42 @@ const ManagementPage: React.FC = () => {
             sx={{ mt: 2 }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setReviewDialogOpen(false)}>Cancel</Button>
+        <DialogActions sx={{ p: 3, gap: 2 }}>
+          <Button
+            onClick={() => setReviewDialogOpen(false)}
+            variant="outlined"
+            sx={{
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
+            Cancel
+          </Button>
           <Button
             onClick={handleSubmitReview}
             variant="contained"
             color={reviewAction === 'approve' ? 'success' : 'error'}
             disabled={processing}
             startIcon={processing ? <CircularProgress size={20} /> : null}
+            sx={{
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+              px: 3,
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+              },
+              transition: 'all 0.3s ease',
+            }}
           >
             {processing ? 'Processing...' : reviewAction === 'approve' ? 'Approve' : 'Reject'}
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
