@@ -45,9 +45,11 @@ export const authService = {
       let data;
       try {
         data = await response.json();
+        console.log('Login response:', { status: response.status, ok: response.ok, data });
       } catch (jsonError) {
         // If response is not JSON, it might be an error
         const statusText = response.status ? ` (${response.status})` : '';
+        console.error('Failed to parse JSON response:', jsonError);
         return { 
           success: false, 
           message: `Server error${statusText}. Please check if the backend is running.` 
@@ -58,8 +60,10 @@ export const authService = {
         // Store authentication info in localStorage
         localStorage.setItem(AUTH_TOKEN_KEY, 'authenticated');
         localStorage.setItem(AUTH_USERNAME_KEY, data.username || credentials.username);
+        console.log('Login successful, stored in localStorage');
         return { success: true, message: data.message, username: data.username };
       } else {
+        console.log('Login failed:', data);
         return { success: false, message: data.error || 'Login failed' };
       }
     } catch (error: any) {

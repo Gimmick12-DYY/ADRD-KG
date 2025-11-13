@@ -33,17 +33,25 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     setLoading(true);
 
     try {
+      console.log('Attempting login with:', { username });
       const result = await authService.login({ username, password });
+      console.log('Login result:', result);
       
       if (result.success) {
+        console.log('Login successful, navigating to /management');
         if (onLoginSuccess) {
           onLoginSuccess();
         }
-        navigate('/management');
+        // Small delay to ensure localStorage is set, then navigate
+        setTimeout(() => {
+          navigate('/management', { replace: true });
+        }, 100);
       } else {
+        console.log('Login failed:', result.message);
         setError(result.message);
       }
     } catch (err) {
+      console.error('Login exception:', err);
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
