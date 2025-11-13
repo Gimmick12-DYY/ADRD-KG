@@ -46,7 +46,7 @@ const ContributionPage: React.FC = () => {
       const { apiService } = await import('../services/api');
       
       // Upload file to backend
-      const result = await apiService.uploadFile(file, '');
+      await apiService.uploadFile(file, '');
       
       setUploadStatus('success');
       setUploadMessage('File uploaded successfully! Your submission is pending review by an administrator.');
