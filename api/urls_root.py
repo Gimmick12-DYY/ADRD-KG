@@ -80,8 +80,27 @@ if views_module:
         path('filters/', views_module.get_filters),
         path('analytics/overview', views_module.get_analytics_overview),
         path('analytics/overview/', views_module.get_analytics_overview),
+        # Authentication
+        path('auth/login', views_module.admin_login),
+        path('auth/login/', views_module.admin_login),
+        path('auth/logout', views_module.admin_logout),
+        path('auth/logout/', views_module.admin_logout),
+        path('auth/check', views_module.check_auth),
+        path('auth/check/', views_module.check_auth),
+        # File upload
+        path('upload', views_module.upload_file),
+        path('upload/', views_module.upload_file),
+        # Management
+        path('management/pending', views_module.get_pending_uploads),
+        path('management/pending/', views_module.get_pending_uploads),
+        path('management/pending/<int:upload_id>', views_module.get_pending_upload_detail),
+        path('management/pending/<int:upload_id>/', views_module.get_pending_upload_detail),
+        path('management/pending/<int:upload_id>/approve', views_module.approve_upload),
+        path('management/pending/<int:upload_id>/approve/', views_module.approve_upload),
+        path('management/pending/<int:upload_id>/reject', views_module.reject_upload),
+        path('management/pending/<int:upload_id>/reject/', views_module.reject_upload),
     ])
-    print(f"✓ Full API patterns loaded")
+    print(f"✓ Full API patterns loaded (including auth and management)")
 else:
     print(f"⚠ Using minimal API (views import failed)")
 

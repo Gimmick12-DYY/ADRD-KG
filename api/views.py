@@ -472,7 +472,9 @@ def get_recent_publications(request):
 def admin_login(request):
     """Admin login endpoint"""
     try:
-        data = json.loads(request.body)
+        # Decode request body (Django request.body is always bytes)
+        body = request.body.decode('utf-8') if isinstance(request.body, bytes) else request.body
+        data = json.loads(body)
         username = data.get('username')
         password = data.get('password')
         
@@ -575,7 +577,8 @@ def get_pending_upload_detail(request, upload_id):
 def approve_upload(request, upload_id):
     """Approve a pending upload and add to database"""
     try:
-        data = json.loads(request.body)
+        body = request.body.decode('utf-8') if isinstance(request.body, bytes) else request.body
+        data = json.loads(body)
         review_notes = data.get('review_notes', '')
         reviewed_by = data.get('reviewed_by', 'admin')
         
@@ -627,7 +630,8 @@ def approve_upload(request, upload_id):
 def reject_upload(request, upload_id):
     """Reject a pending upload"""
     try:
-        data = json.loads(request.body)
+        body = request.body.decode('utf-8') if isinstance(request.body, bytes) else request.body
+        data = json.loads(body)
         review_notes = data.get('review_notes', '')
         reviewed_by = data.get('reviewed_by', 'admin')
         
@@ -654,7 +658,8 @@ def reject_upload(request, upload_id):
 def upload_file(request):
     """Upload a file for review"""
     try:
-        data = json.loads(request.body)
+        body = request.body.decode('utf-8') if isinstance(request.body, bytes) else request.body
+        data = json.loads(body)
         file_name = data.get('file_name')
         file_content = data.get('file_content')  # Base64 encoded or raw text
         file_type = data.get('file_type', 'csv')
