@@ -550,15 +550,38 @@ def get_pending_upload_detail(request, upload_id):
         # Parse file content
         file_content = None
         try:
-            file_content = json.loads(upload.file_content)
-        except:
-            file_content = upload.file_content
+            if upload.file_content:
+                file_content = json.loads(upload.file_content)
+                # Ensure all values are JSON serializable
+                if isinstance(file_content, list):
+                    for record in file_content:
+                        if isinstance(record, dict):
+                            for key, value in record.items():
+                                # Convert any non-serializable types
+                                try:
+                                    # Check for NaN values (pandas/numpy)
+                                    if value is None or (hasattr(value, '__class__') and str(value) == 'nan'):
+                                        record[key] = ''
+                                    elif pd.isna(value):
+                                        record[key] = ''
+                                    elif not isinstance(value, (str, int, float, bool, type(None))):
+                                        # Try to convert to string
+                                        record[key] = str(value)
+                                except:
+                                    # If anything fails, set to empty string
+                                    record[key] = ''
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")
+            file_content = None
+        except Exception as e:
+            print(f"Error parsing file_content: {e}")
+            file_content = None
         
         return JsonResponse({
             'id': upload.id,
             'file_name': upload.file_name,
             'file_type': upload.file_type,
-            'file_content': file_content,
+            'file_content': file_content if file_content else [],
             'uploaded_by': upload.uploaded_by,
             'status': upload.status,
             'review_notes': upload.review_notes,
@@ -569,6 +592,9 @@ def get_pending_upload_detail(request, upload_id):
     except PendingUpload.DoesNotExist:
         return JsonResponse({'error': 'Upload not found'}, status=404)
     except Exception as e:
+        print(f"Error in get_pending_upload_detail: {e}")
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
 
 
@@ -695,20 +721,78 @@ def upload_file(request):
                 
                 decoded = base64.b64decode(file_content)
                 df = pd.read_excel(io.BytesIO(decoded))
-                parsed_content = df.to_dict('records')
+                
+                # Replace NaN values and convert to native Python types
+                df = df.fillna('')  # Replace NaN with empty string
+                
+                # Convert all columns to string first to avoid type issues, then parse back
+                # This ensures all data is JSON serializable
+                parsed_content = []
+                for _, row in df.iterrows():
+                    record = {}
+                    for col in df.columns:
+                        value = row[col]
+                        # Convert to native Python type
+                        if pd.isna(value) or value == '':
+                            record[col] = ''
+                        elif isinstance(value, (pd.Timestamp, pd.DatetimeTZDtype)):
+                            record[col] = str(value)
+                        elif hasattr(value, 'item'):  # numpy types
+                            try:
+                                record[col] = value.item()
+                            except:
+                                record[col] = str(value)
+                        elif isinstance(value, (int, float)):
+                            # Keep numbers as-is but ensure they're native Python types
+                            record[col] = float(value) if isinstance(value, float) else int(value)
+                        elif isinstance(value, bool):
+                            record[col] = bool(value)
+                        else:
+                            # Convert everything else to string
+                            record[col] = str(value) if value else ''
+                    parsed_content.append(record)
             else:
                 return JsonResponse({'error': 'Unsupported file type'}, status=400)
         except Exception as e:
             return JsonResponse({'error': f'Error parsing file: {str(e)}'}, status=400)
         
         # Save as pending upload
-        pending_upload = PendingUpload.objects.create(
-            file_name=file_name,
-            file_content=json.dumps(parsed_content),
-            file_type=file_type,
-            uploaded_by=uploaded_by,
-            status='pending'
-        )
+        # Ensure parsed_content is JSON serializable before saving
+        try:
+            # Test JSON serialization
+            json_str = json.dumps(parsed_content)
+            # If successful, save to database
+            pending_upload = PendingUpload.objects.create(
+                file_name=file_name,
+                file_content=json_str,
+                file_type=file_type,
+                uploaded_by=uploaded_by,
+                status='pending'
+            )
+        except (TypeError, ValueError) as e:
+            # If JSON serialization fails, try to clean the data more
+            print(f"JSON serialization error: {e}")
+            # Clean the data one more time
+            cleaned_content = []
+            for record in parsed_content:
+                cleaned_record = {}
+                for key, value in record.items():
+                    try:
+                        # Try to serialize each value
+                        json.dumps(value)
+                        cleaned_record[key] = value
+                    except:
+                        # If it fails, convert to string
+                        cleaned_record[key] = str(value) if value else ''
+                cleaned_content.append(cleaned_record)
+            
+            pending_upload = PendingUpload.objects.create(
+                file_name=file_name,
+                file_content=json.dumps(cleaned_content),
+                file_type=file_type,
+                uploaded_by=uploaded_by,
+                status='pending'
+            )
         
         return JsonResponse({
             'success': True,

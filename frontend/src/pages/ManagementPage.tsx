@@ -111,9 +111,26 @@ const ManagementPage: React.FC = () => {
             detail.file_content = JSON.parse(detail.file_content);
           } catch (e) {
             console.warn('Could not parse file_content as JSON:', e);
+            detail.file_content = [];
           }
         }
+        // Ensure it's an array
+        if (!Array.isArray(detail.file_content)) {
+          console.warn('file_content is not an array:', typeof detail.file_content);
+          detail.file_content = [];
+        }
+      } else {
+        console.warn('No file_content in detail response');
+        detail.file_content = [];
       }
+      
+      console.log('Processed detail for preview:', {
+        id: detail.id,
+        file_name: detail.file_name,
+        file_type: detail.file_type,
+        content_length: detail.file_content?.length || 0,
+        first_row: detail.file_content?.[0] || null,
+      });
       
       setSelectedUpload(detail);
     } catch (err: any) {
