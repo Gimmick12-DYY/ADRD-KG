@@ -28,9 +28,9 @@ import {
 import {
   CheckCircle,
   Cancel,
-  Visibility,
   Logout,
   Refresh,
+  Preview,
 } from '@mui/icons-material';
 import { apiService } from '../services/api';
 import { authService } from '../services/auth';
@@ -156,7 +156,7 @@ const ManagementPage: React.FC = () => {
         pb: 4,
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth={false} sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 } }}>
         <Box
           sx={{
             mb: 4,
@@ -391,6 +391,7 @@ const ManagementPage: React.FC = () => {
                             size="small"
                             onClick={() => handleViewDetail(upload.id)}
                             color="primary"
+                            title="Preview dataset"
                             sx={{
                               '&:hover': {
                                 background: 'rgba(114, 7, 171, 0.1)',
@@ -399,7 +400,7 @@ const ManagementPage: React.FC = () => {
                               transition: 'all 0.2s ease',
                             }}
                           >
-                            <Visibility />
+                            <Preview />
                           </IconButton>
                           {upload.status === 'pending' && (
                             <>
@@ -444,16 +445,17 @@ const ManagementPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Detail Dialog */}
+      {/* Detail Dialog with Enhanced Preview */}
       <Dialog
         open={detailDialogOpen}
         onClose={() => setDetailDialogOpen(false)}
-        maxWidth="md"
+        maxWidth="xl"
         fullWidth
         PaperProps={{
           sx: {
             borderRadius: 3,
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            maxHeight: '90vh',
           },
         }}
       >
@@ -464,74 +466,216 @@ const ManagementPage: React.FC = () => {
             fontSize: '1.25rem',
             borderBottom: '1px solid',
             borderColor: 'divider',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          Upload Details: {selectedUpload?.file_name}
+          <Box>
+            <Typography variant="h6" component="span">
+              Dataset Preview: {selectedUpload?.file_name}
+            </Typography>
+          </Box>
+          {selectedUpload && (
+            <Chip
+              label={selectedUpload.status.charAt(0).toUpperCase() + selectedUpload.status.slice(1)}
+              color={getStatusColor(selectedUpload.status) as any}
+              size="small"
+              sx={{ fontWeight: 600 }}
+            />
+          )}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ p: 3 }}>
           {selectedUpload && (
             <Box>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                <strong>File Type:</strong> {selectedUpload.file_type}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                <strong>Uploaded By:</strong> {selectedUpload.uploaded_by || 'Anonymous'}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                <strong>Status:</strong>{' '}
-                <Chip
-                  label={selectedUpload.status}
-                  color={getStatusColor(selectedUpload.status) as any}
-                  size="small"
-                />
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                <strong>Created:</strong> {new Date(selectedUpload.created_at).toLocaleString()}
-              </Typography>
+              {/* Metadata Section */}
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  gap: 2,
+                  mb: 3,
+                  p: 2,
+                  borderRadius: 2,
+                  background: 'rgba(114, 7, 171, 0.03)',
+                }}
+              >
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                    File Type
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {selectedUpload.file_type.toUpperCase()}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                    Uploaded By
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {selectedUpload.uploaded_by || 'Anonymous'}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                    Created At
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {new Date(selectedUpload.created_at).toLocaleString()}
+                  </Typography>
+                </Box>
+                {selectedUpload.reviewed_at && (
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                      Reviewed At
+                    </Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      {new Date(selectedUpload.reviewed_at).toLocaleString()}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
               {selectedUpload.review_notes && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="subtitle2">Review Notes:</Typography>
-                  <Typography variant="body2">{selectedUpload.review_notes}</Typography>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
+                    Review Notes:
+                  </Typography>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      background: 'rgba(114, 7, 171, 0.05)',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                    }}
+                  >
+                    <Typography variant="body2">{selectedUpload.review_notes}</Typography>
+                  </Paper>
                 </Box>
               )}
-              {selectedUpload.file_content && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="subtitle2" gutterBottom>
-                    File Content Preview ({selectedUpload.file_content.length} rows):
-                  </Typography>
-                  <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+
+              {/* Enhanced Dataset Preview */}
+              {selectedUpload.file_content && selectedUpload.file_content.length > 0 && (
+                <Box sx={{ mt: 3 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                      Dataset Preview
+                    </Typography>
+                    <Chip
+                      label={`${selectedUpload.file_content.length} total rows`}
+                      size="small"
+                      sx={{
+                        background: 'rgba(114, 7, 171, 0.1)',
+                        color: 'primary.main',
+                        fontWeight: 600,
+                      }}
+                    />
+                  </Box>
+                  <TableContainer
+                    component={Paper}
+                    elevation={2}
+                    sx={{
+                      maxHeight: 500,
+                      borderRadius: 2,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      '& .MuiTable-root': {
+                        minWidth: 650,
+                      },
+                    }}
+                  >
                     <Table size="small" stickyHeader>
                       <TableHead>
-                        <TableRow>
+                        <TableRow
+                          sx={{
+                            background: 'linear-gradient(90deg, rgba(114, 7, 171, 0.1) 0%, rgba(220, 0, 78, 0.1) 100%)',
+                            '& .MuiTableCell-head': {
+                              fontWeight: 700,
+                              fontSize: '0.9rem',
+                              color: 'text.primary',
+                              borderBottom: '2px solid',
+                              borderColor: 'divider',
+                              position: 'sticky',
+                              top: 0,
+                              zIndex: 1,
+                            },
+                          }}
+                        >
                           {selectedUpload.file_content[0] &&
                             Object.keys(selectedUpload.file_content[0]).map((key) => (
-                              <TableCell key={key}>{key}</TableCell>
+                              <TableCell key={key} sx={{ textTransform: 'capitalize' }}>
+                                {key.replace(/_/g, ' ')}
+                              </TableCell>
                             ))}
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {selectedUpload.file_content.slice(0, 10).map((row: any, idx: number) => (
-                          <TableRow key={idx}>
+                        {selectedUpload.file_content.slice(0, 20).map((row: any, idx: number) => (
+                          <TableRow
+                            key={idx}
+                            sx={{
+                              '&:hover': {
+                                background: 'rgba(114, 7, 171, 0.03)',
+                              },
+                              '&:nth-of-type(even)': {
+                                background: 'rgba(0,0,0,0.02)',
+                              },
+                            }}
+                          >
                             {Object.values(row).map((value: any, cellIdx: number) => (
-                              <TableCell key={cellIdx}>{String(value)}</TableCell>
+                              <TableCell
+                                key={cellIdx}
+                                sx={{
+                                  maxWidth: 200,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  '&:hover': {
+                                    whiteSpace: 'normal',
+                                    wordBreak: 'break-word',
+                                  },
+                                }}
+                                title={String(value)}
+                              >
+                                {String(value) || <em style={{ color: '#999' }}>N/A</em>}
+                              </TableCell>
                             ))}
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
                   </TableContainer>
-                  {selectedUpload.file_content.length > 10 && (
-                    <Typography variant="caption" color="text.secondary">
-                      Showing first 10 rows of {selectedUpload.file_content.length} total rows
-                    </Typography>
+                  {selectedUpload.file_content.length > 20 && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Chip
+                        label={`Showing first 20 of ${selectedUpload.file_content.length} rows`}
+                        size="small"
+                        sx={{
+                          background: 'rgba(114, 7, 171, 0.1)',
+                          color: 'primary.main',
+                        }}
+                      />
+                    </Box>
                   )}
                 </Box>
               )}
             </Box>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDetailDialogOpen(false)}>Close</Button>
+        <DialogActions sx={{ p: 3, gap: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+          <Button
+            onClick={() => setDetailDialogOpen(false)}
+            variant="outlined"
+            sx={{
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
+            Close
+          </Button>
           {selectedUpload?.status === 'pending' && (
             <>
               <Button
@@ -539,8 +683,20 @@ const ManagementPage: React.FC = () => {
                   setDetailDialogOpen(false);
                   handleReview(selectedUpload.id, 'approve');
                 }}
+                variant="contained"
                 color="success"
                 startIcon={<CheckCircle />}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  px: 3,
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 12px rgba(46, 125, 50, 0.3)',
+                  },
+                  transition: 'all 0.3s ease',
+                }}
               >
                 Approve
               </Button>
@@ -549,8 +705,20 @@ const ManagementPage: React.FC = () => {
                   setDetailDialogOpen(false);
                   handleReview(selectedUpload.id, 'reject');
                 }}
+                variant="contained"
                 color="error"
                 startIcon={<Cancel />}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  px: 3,
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 12px rgba(211, 47, 47, 0.3)',
+                  },
+                  transition: 'all 0.3s ease',
+                }}
               >
                 Reject
               </Button>
