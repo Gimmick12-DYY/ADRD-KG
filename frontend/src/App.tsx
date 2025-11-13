@@ -41,6 +41,7 @@ function App() {
                 <Route path="/publications" element={<PublicationsPage />} />
                 <Route path="/contribute" element={<ContributionPage />} />
                 <Route path="/analytics" element={<AnalyticsPage />} />
+                <Route path="/management" element={<ManagementPage />} />
               </Routes>
             </Box>
           </Box>
