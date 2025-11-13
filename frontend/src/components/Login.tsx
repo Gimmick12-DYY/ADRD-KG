@@ -8,8 +8,10 @@ import {
   Box,
   Alert,
   CircularProgress,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
-import { Lock, Person } from '@mui/icons-material';
+import { Lock, Person, Visibility, VisibilityOff } from '@mui/icons-material';
 import { authService } from '../services/auth';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,6 +22,7 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -92,7 +95,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             <TextField
               fullWidth
               label="Password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               variant="outlined"
               margin="normal"
               value={password}
@@ -100,6 +103,17 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               required
               InputProps={{
                 startAdornment: <Lock sx={{ mr: 1, color: 'text.secondary' }} />,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
             />
             <Button
