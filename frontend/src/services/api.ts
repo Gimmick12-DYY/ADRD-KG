@@ -2,18 +2,17 @@ import axios from 'axios';
 
 // API Base URL configuration for different deployment environments
 const getApiBaseUrl = () => {
-  // Check for custom API URL (highest priority - for custom deployments)
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
-  }
-  
-  // Check if we're in development mode (local development)
+  // Check if we're in development mode
   if (import.meta.env.DEV) {
     return 'http://localhost:8000/api';
   }
   
-  // For production deployments (Vercel, etc.), use relative URL
-  // Vercel routes /api/* to the backend automatically
+  // Check for custom API URL (for GitHub Pages + external backend)
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  
+  // Default to relative URL (for same-origin deployments like Vercel)
   return '/api';
 };
 
