@@ -517,10 +517,17 @@ def check_auth(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def get_pending_uploads(request):
-    """Get all pending uploads"""
+    """Get all pending uploads (or all uploads if status='all')"""
     try:
         status = request.GET.get('status', 'pending')
-        pending_uploads = PendingUpload.objects.filter(status=status)
+        
+        # If status is 'all', get all uploads regardless of status
+        if status == 'all':
+            pending_uploads = PendingUpload.objects.all().order_by('-created_at')
+        else:
+            pending_uploads = PendingUpload.objects.filter(status=status).order_by('-created_at')
+        
+        print(f"Fetching uploads with status='{status}': {len(pending_uploads)} found")
         
         return JsonResponse({
             'uploads': [{
@@ -534,9 +541,13 @@ def get_pending_uploads(request):
                 'created_at': u.created_at.isoformat() if u.created_at else None,
                 'reviewed_at': u.reviewed_at.isoformat() if u.reviewed_at else None,
             } for u in pending_uploads],
-            'total': len(pending_uploads)
+            'total': len(pending_uploads),
+            'status_filter': status
         })
     except Exception as e:
+        print(f"Error in get_pending_uploads: {e}")
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
 
 
@@ -620,18 +631,40 @@ def approve_upload(request, upload_id):
         if not isinstance(file_data, list) or len(file_data) == 0:
             return JsonResponse({'error': 'No data found in file'}, status=400)
         
+        # Log the actual column names in the file for debugging
+        if len(file_data) > 0:
+            actual_columns = list(file_data[0].keys())
+            print(f"Actual columns in file: {actual_columns}")
+        
         # Helper function to get value from row with multiple possible keys (case-insensitive)
         def get_value(row, possible_keys, default=''):
+            # First try exact match
             for key in possible_keys:
-                # Try exact match first
                 if key in row:
                     value = row[key]
                     return str(value).strip() if value else default
-                # Try case-insensitive match
+            
+            # Then try case-insensitive and normalized match
+            for key in possible_keys:
                 for row_key in row.keys():
-                    if row_key.lower().replace(' ', '_').replace('-', '_') == key.lower().replace(' ', '_').replace('-', '_'):
+                    # Normalize both keys for comparison (remove spaces, underscores, hyphens, dots, case)
+                    def normalize(s):
+                        return s.lower().replace(' ', '').replace('_', '').replace('-', '').replace('.', '').strip()
+                    
+                    if normalize(row_key) == normalize(key):
                         value = row[row_key]
                         return str(value).strip() if value else default
+            
+            # Try partial match (contains)
+            for key in possible_keys:
+                key_normalized = key.lower().replace(' ', '').replace('_', '').replace('-', '').replace('.', '')
+                for row_key in row.keys():
+                    row_key_normalized = row_key.lower().replace(' ', '').replace('_', '').replace('-', '').replace('.', '')
+                    # Check if key is contained in row_key or vice versa
+                    if key_normalized in row_key_normalized or row_key_normalized in key_normalized:
+                        value = row[row_key]
+                        return str(value).strip() if value else default
+            
             return default
         
         # Process and add to database
@@ -662,37 +695,50 @@ def approve_upload(request, upload_id):
                 # Skip if essential fields are missing
                 if not name:
                     error_count += 1
-                    errors.append(f"Row {idx + 1}: Missing dataset name")
+                    available_keys = list(row.keys())
+                    errors.append(f"Row {idx + 1}: Missing dataset name. Available columns: {', '.join(available_keys)}")
+                    print(f"Row {idx + 1} - Available columns: {available_keys}")
+                    print(f"Row {idx + 1} - Row data: {row}")
                     continue
                 
                 # Create dataset
-                Dataset.objects.create(
-                    name=name,
-                    description=description,
-                    disease_type=disease_type,
-                    sample_size=sample_size,
-                    data_accessibility=data_accessibility,
-                    wgs_available=wgs_available,
-                    imaging_types=imaging_types,
-                    modalities=modalities
-                )
-                added_count += 1
-                print(f"Successfully added dataset: {name}")
+                try:
+                    Dataset.objects.create(
+                        name=name,
+                        description=description,
+                        disease_type=disease_type,
+                        sample_size=sample_size,
+                        data_accessibility=data_accessibility,
+                        wgs_available=wgs_available,
+                        imaging_types=imaging_types,
+                        modalities=modalities
+                    )
+                    added_count += 1
+                    print(f"Successfully added dataset: {name}")
+                except Exception as db_error:
+                    error_count += 1
+                    error_msg = f"Row {idx + 1}: Database error - {str(db_error)}"
+                    errors.append(error_msg)
+                    print(f"Database error for row {idx + 1}: {db_error}")
+                    import traceback
+                    traceback.print_exc()
                 
             except Exception as e:
                 error_count += 1
                 error_msg = f"Row {idx + 1}: {str(e)}"
                 errors.append(error_msg)
                 print(f"Error processing row {idx + 1}: {e}")
+                print(f"Row {idx + 1} data: {row}")
                 import traceback
                 traceback.print_exc()
         
-        # Update upload status
+        # Update upload status - ensure it's saved properly
         upload.status = 'approved'
         upload.review_notes = review_notes
         upload.reviewed_by = reviewed_by
         upload.reviewed_at = timezone.now()
-        upload.save()
+        upload.save(update_fields=['status', 'review_notes', 'reviewed_by', 'reviewed_at'])
+        print(f"Upload {upload.id} status updated to: {upload.status}")
         
         # Return result with counts
         message = f'Successfully added {added_count} dataset(s) to the database.'
@@ -730,7 +776,8 @@ def reject_upload(request, upload_id):
         upload.review_notes = review_notes
         upload.reviewed_by = reviewed_by
         upload.reviewed_at = timezone.now()
-        upload.save()
+        upload.save(update_fields=['status', 'review_notes', 'reviewed_by', 'reviewed_at'])
+        print(f"Upload {upload.id} status updated to: {upload.status}")
         
         return JsonResponse({
             'success': True,

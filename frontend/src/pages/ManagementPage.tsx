@@ -74,6 +74,7 @@ const ManagementPage: React.FC = () => {
   const [processing, setProcessing] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [uploadCounts, setUploadCounts] = useState({ pending: 0, approved: 0, rejected: 0, all: 0 });
   const navigate = useNavigate();
 
   const username = authService.getUsername();
@@ -82,14 +83,62 @@ const ManagementPage: React.FC = () => {
     fetchUploads();
   }, [tabValue]);
 
+  // Fetch counts for all tabs on initial load
+  useEffect(() => {
+    const fetchAllCounts = async () => {
+      try {
+        const [pending, approved, rejected, all] = await Promise.all([
+          apiService.getPendingUploads('pending'),
+          apiService.getPendingUploads('approved'),
+          apiService.getPendingUploads('rejected'),
+          apiService.getPendingUploads('all'),
+        ]);
+        setUploadCounts({
+          pending: pending.uploads?.length || 0,
+          approved: approved.uploads?.length || 0,
+          rejected: rejected.uploads?.length || 0,
+          all: all.uploads?.length || 0,
+        });
+      } catch (err) {
+        console.error('Error fetching upload counts:', err);
+      }
+    };
+    fetchAllCounts();
+  }, []);
+
   const fetchUploads = async () => {
     try {
       setLoading(true);
       setError(null);
-      const status = tabValue === 0 ? 'pending' : tabValue === 1 ? 'approved' : 'rejected';
+      let status: string;
+      if (tabValue === 0) {
+        status = 'pending';
+      } else if (tabValue === 1) {
+        status = 'approved';
+      } else if (tabValue === 2) {
+        status = 'rejected';
+      } else if (tabValue === 3) {
+        status = 'all'; // Show all uploads
+      } else {
+        status = 'pending';
+      }
+      
       const data = await apiService.getPendingUploads(status);
+      console.log(`Fetched ${status} uploads:`, data);
       setUploads(data.uploads || []);
+      
+      // Update counts when fetching
+      if (status === 'pending') {
+        setUploadCounts(prev => ({ ...prev, pending: data.uploads?.length || 0 }));
+      } else if (status === 'approved') {
+        setUploadCounts(prev => ({ ...prev, approved: data.uploads?.length || 0 }));
+      } else if (status === 'rejected') {
+        setUploadCounts(prev => ({ ...prev, rejected: data.uploads?.length || 0 }));
+      } else if (status === 'all') {
+        setUploadCounts(prev => ({ ...prev, all: data.uploads?.length || 0 }));
+      }
     } catch (err: any) {
+      console.error('Error fetching uploads:', err);
       setError(err.message || 'Failed to fetch uploads');
     } finally {
       setLoading(false);
@@ -161,10 +210,24 @@ const ManagementPage: React.FC = () => {
       if (reviewAction === 'approve') {
         const result = await apiService.approveUpload(selectedUpload.id, reviewNotes, username || 'admin');
         if (result.success) {
-          setSuccessMessage(result.message || `Successfully added ${result.added_count || 0} dataset(s) to the database!`);
+          if (result.added_count && result.added_count > 0) {
+            setSuccessMessage(result.message || `Successfully added ${result.added_count} dataset(s) to the database!`);
+          } else {
+            // If no datasets were added, show error instead
+            const errorMsg = result.errors && result.errors.length > 0 
+              ? `Failed to add datasets. Errors: ${result.errors.slice(0, 5).join('; ')}${result.errors.length > 5 ? '...' : ''}`
+              : result.message || 'Failed to add datasets to database. Please check the file format.';
+            setError(errorMsg);
+          }
           if (result.errors && result.errors.length > 0) {
             console.warn('Some rows had errors:', result.errors);
+            // Show first few errors in console for debugging
+            result.errors.slice(0, 10).forEach((err: string, idx: number) => {
+              console.warn(`Error ${idx + 1}:`, err);
+            });
           }
+        } else {
+          setError(result.message || 'Failed to approve upload');
         }
       } else {
         await apiService.rejectUpload(selectedUpload.id, reviewNotes, username || 'admin');
@@ -174,7 +237,27 @@ const ManagementPage: React.FC = () => {
       setReviewDialogOpen(false);
       setDetailDialogOpen(false);
       setReviewNotes('');
-      fetchUploads();
+      
+      // Refresh uploads and counts
+      await fetchUploads();
+      
+      // Also refresh all counts
+      try {
+        const [pending, approved, rejected, all] = await Promise.all([
+          apiService.getPendingUploads('pending'),
+          apiService.getPendingUploads('approved'),
+          apiService.getPendingUploads('rejected'),
+          apiService.getPendingUploads('all'),
+        ]);
+        setUploadCounts({
+          pending: pending.uploads?.length || 0,
+          approved: approved.uploads?.length || 0,
+          rejected: rejected.uploads?.length || 0,
+          all: all.uploads?.length || 0,
+        });
+      } catch (err) {
+        console.error('Error refreshing counts:', err);
+      }
       
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(null), 5000);
@@ -326,9 +409,10 @@ const ManagementPage: React.FC = () => {
                 },
               }}
             >
-              <Tab label={`Pending (${uploads.length})`} />
-              <Tab label="Approved" />
-              <Tab label="Rejected" />
+              <Tab label={`Pending (${uploadCounts.pending})`} />
+              <Tab label={`Approved (${uploadCounts.approved})`} />
+              <Tab label={`Rejected (${uploadCounts.rejected})`} />
+              <Tab label={`All (${uploadCounts.all})`} />
             </Tabs>
           </Box>
 
@@ -636,20 +720,56 @@ const ManagementPage: React.FC = () => {
               {/* Enhanced Dataset Preview */}
               {selectedUpload.file_content && Array.isArray(selectedUpload.file_content) && selectedUpload.file_content.length > 0 ? (
                 <Box sx={{ mt: 3 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 2 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
                       Dataset Preview
                     </Typography>
-                    <Chip
-                      label={`${selectedUpload.file_content.length} total rows`}
-                      size="small"
-                      sx={{
-                        background: 'rgba(114, 7, 171, 0.1)',
-                        color: 'primary.main',
-                        fontWeight: 600,
-                      }}
-                    />
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      <Chip
+                        label={`${selectedUpload.file_content.length} total rows`}
+                        size="small"
+                        sx={{
+                          background: 'rgba(114, 7, 171, 0.1)',
+                          color: 'primary.main',
+                          fontWeight: 600,
+                        }}
+                      />
+                      {selectedUpload.file_content[0] && (
+                        <Chip
+                          label={`${Object.keys(selectedUpload.file_content[0]).length} columns`}
+                          size="small"
+                          sx={{
+                            background: 'rgba(46, 125, 50, 0.1)',
+                            color: 'success.main',
+                            fontWeight: 600,
+                          }}
+                        />
+                      )}
+                    </Box>
                   </Box>
+                  
+                  {/* Show detected columns */}
+                  {selectedUpload.file_content[0] && (
+                    <Alert severity="info" sx={{ mb: 2, borderRadius: 2 }}>
+                      <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
+                        Detected Columns:
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
+                        {Object.keys(selectedUpload.file_content[0]).map((col) => (
+                          <Chip
+                            key={col}
+                            label={col}
+                            size="small"
+                            variant="outlined"
+                            sx={{ fontSize: '0.75rem' }}
+                          />
+                        ))}
+                      </Box>
+                      <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary' }}>
+                        Required columns: Dataset Name, Description, Disease Type, Sample Size, Data Accessibility
+                      </Typography>
+                    </Alert>
+                  )}
                   <TableContainer
                     component={Paper}
                     elevation={2}
