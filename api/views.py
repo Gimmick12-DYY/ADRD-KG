@@ -613,26 +613,79 @@ def approve_upload(request, upload_id):
         # Parse file content
         try:
             file_data = json.loads(upload.file_content)
-        except:
-            return JsonResponse({'error': 'Invalid file content format'}, status=400)
+        except Exception as e:
+            print(f"Error parsing file_content: {e}")
+            return JsonResponse({'error': f'Invalid file content format: {str(e)}'}, status=400)
+        
+        if not isinstance(file_data, list) or len(file_data) == 0:
+            return JsonResponse({'error': 'No data found in file'}, status=400)
+        
+        # Helper function to get value from row with multiple possible keys (case-insensitive)
+        def get_value(row, possible_keys, default=''):
+            for key in possible_keys:
+                # Try exact match first
+                if key in row:
+                    value = row[key]
+                    return str(value).strip() if value else default
+                # Try case-insensitive match
+                for row_key in row.keys():
+                    if row_key.lower().replace(' ', '_').replace('-', '_') == key.lower().replace(' ', '_').replace('-', '_'):
+                        value = row[row_key]
+                        return str(value).strip() if value else default
+            return default
         
         # Process and add to database
-        if isinstance(file_data, list):
-            for row in file_data:
+        added_count = 0
+        error_count = 0
+        errors = []
+        
+        for idx, row in enumerate(file_data):
+            try:
+                # Get values with flexible column name matching
+                name = get_value(row, ['Dataset Name', 'name', 'dataset_name', 'Dataset', 'Title'], '')
+                description = get_value(row, ['Description', 'description', 'desc', 'Summary'], '')
+                disease_type = get_value(row, ['Disease Type', 'disease_type', 'disease', 'Disease', 'Type'], '')
+                
+                # Handle sample size - try to convert to int
+                sample_size_str = get_value(row, ['Sample Size', 'sample_size', 'Sample Size', 'n', 'N', 'size'], '0')
                 try:
-                    Dataset.objects.create(
-                        name=row.get('Dataset Name', row.get('name', '')),
-                        description=row.get('Description', row.get('description', '')),
-                        disease_type=row.get('Disease Type', row.get('disease_type', '')),
-                        sample_size=int(row.get('Sample Size', row.get('sample_size', 0)) or 0),
-                        data_accessibility=row.get('Data Accessibility', row.get('data_accessibility', '')),
-                        wgs_available=row.get('WGS Available', row.get('wgs_available', '')),
-                        imaging_types=row.get('Imaging Types', row.get('imaging_types', '')),
-                        modalities=row.get('Modalities', row.get('modalities', ''))
-                    )
-                except Exception as e:
-                    # Continue processing other rows even if one fails
-                    print(f"Error processing row: {e}")
+                    # Remove any non-numeric characters except minus sign
+                    sample_size = int(''.join(c for c in str(sample_size_str) if c.isdigit() or c == '-') or '0')
+                except:
+                    sample_size = 0
+                
+                data_accessibility = get_value(row, ['Data Accessibility', 'data_accessibility', 'Accessibility', 'access', 'Access'], '')
+                wgs_available = get_value(row, ['WGS Available', 'wgs_available', 'WGS', 'wgs', 'WGS Available?'], '')
+                imaging_types = get_value(row, ['Imaging Types', 'imaging_types', 'Imaging', 'imaging', 'Imaging Types'], '')
+                modalities = get_value(row, ['Modalities', 'modalities', 'Modality', 'modality', 'Data Types'], '')
+                
+                # Skip if essential fields are missing
+                if not name:
+                    error_count += 1
+                    errors.append(f"Row {idx + 1}: Missing dataset name")
+                    continue
+                
+                # Create dataset
+                Dataset.objects.create(
+                    name=name,
+                    description=description,
+                    disease_type=disease_type,
+                    sample_size=sample_size,
+                    data_accessibility=data_accessibility,
+                    wgs_available=wgs_available,
+                    imaging_types=imaging_types,
+                    modalities=modalities
+                )
+                added_count += 1
+                print(f"Successfully added dataset: {name}")
+                
+            except Exception as e:
+                error_count += 1
+                error_msg = f"Row {idx + 1}: {str(e)}"
+                errors.append(error_msg)
+                print(f"Error processing row {idx + 1}: {e}")
+                import traceback
+                traceback.print_exc()
         
         # Update upload status
         upload.status = 'approved'
@@ -641,13 +694,24 @@ def approve_upload(request, upload_id):
         upload.reviewed_at = timezone.now()
         upload.save()
         
+        # Return result with counts
+        message = f'Successfully added {added_count} dataset(s) to the database.'
+        if error_count > 0:
+            message += f' {error_count} row(s) had errors.'
+        
         return JsonResponse({
             'success': True,
-            'message': 'Upload approved and added to database'
+            'message': message,
+            'added_count': added_count,
+            'error_count': error_count,
+            'errors': errors[:10] if errors else []  # Return first 10 errors
         })
     except PendingUpload.DoesNotExist:
         return JsonResponse({'error': 'Upload not found'}, status=404)
     except Exception as e:
+        print(f"Error in approve_upload: {e}")
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
 
 

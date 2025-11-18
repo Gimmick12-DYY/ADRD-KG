@@ -65,6 +65,7 @@ const ManagementPage: React.FC = () => {
   const [uploads, setUploads] = useState<PendingUpload[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [selectedUpload, setSelectedUpload] = useState<UploadDetail | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
@@ -154,15 +155,29 @@ const ManagementPage: React.FC = () => {
 
     try {
       setProcessing(true);
+      setError(null);
+      setSuccessMessage(null);
+      
       if (reviewAction === 'approve') {
-        await apiService.approveUpload(selectedUpload.id, reviewNotes, username || 'admin');
+        const result = await apiService.approveUpload(selectedUpload.id, reviewNotes, username || 'admin');
+        if (result.success) {
+          setSuccessMessage(result.message || `Successfully added ${result.added_count || 0} dataset(s) to the database!`);
+          if (result.errors && result.errors.length > 0) {
+            console.warn('Some rows had errors:', result.errors);
+          }
+        }
       } else {
         await apiService.rejectUpload(selectedUpload.id, reviewNotes, username || 'admin');
+        setSuccessMessage('Upload rejected successfully.');
       }
+      
       setReviewDialogOpen(false);
       setDetailDialogOpen(false);
       setReviewNotes('');
       fetchUploads();
+      
+      // Clear success message after 5 seconds
+      setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err: any) {
       setError(err.message || 'Failed to process review');
     } finally {
@@ -263,6 +278,16 @@ const ManagementPage: React.FC = () => {
       {error && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
           {error}
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert 
+          severity="success" 
+          sx={{ mb: 2 }} 
+          onClose={() => setSuccessMessage(null)}
+        >
+          {successMessage}
         </Alert>
       )}
 

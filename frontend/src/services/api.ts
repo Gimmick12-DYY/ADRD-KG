@@ -189,7 +189,13 @@ export const apiService = {
     return response.data;
   },
 
-  approveUpload: async (uploadId: number, reviewNotes: string = '', reviewedBy: string = 'admin') => {
+  approveUpload: async (uploadId: number, reviewNotes: string = '', reviewedBy: string = 'admin'): Promise<{
+    success: boolean;
+    message: string;
+    added_count?: number;
+    error_count?: number;
+    errors?: string[];
+  }> => {
     const response = await api.post(`/management/pending/${uploadId}/approve`, {
       review_notes: reviewNotes,
       reviewed_by: reviewedBy,
