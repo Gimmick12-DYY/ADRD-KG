@@ -31,7 +31,13 @@ def health_check(request):
 @require_http_methods(["GET"])
 def get_datasets(request):
     """Get all datasets with optional filtering"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         disease_type = request.GET.get('disease_type')
         modality = request.GET.get('modality')
         search = request.GET.get('search')
@@ -50,33 +56,50 @@ def get_datasets(request):
         paginator = Paginator(queryset, per_page)
         datasets_page = paginator.get_page(page)
         
+        # Convert to list to ensure data is fetched before closing connection
+        datasets_list = [{
+            'id': d.id,
+            'name': d.name,
+            'description': d.description,
+            'disease_type': d.disease_type,
+            'sample_size': d.sample_size,
+            'data_accessibility': d.data_accessibility,
+            'wgs_available': d.wgs_available,
+            'imaging_types': d.imaging_types,
+            'modalities': d.modalities,
+            'created_at': d.created_at.isoformat() if d.created_at else None
+        } for d in datasets_page]
+        
+        # Close connection after use
+        connection.close()
+        
         return JsonResponse({
-            'datasets': [{
-                'id': d.id,
-                'name': d.name,
-                'description': d.description,
-                'disease_type': d.disease_type,
-                'sample_size': d.sample_size,
-                'data_accessibility': d.data_accessibility,
-                'wgs_available': d.wgs_available,
-                'imaging_types': d.imaging_types,
-                'modalities': d.modalities,
-                'created_at': d.created_at.isoformat() if d.created_at else None
-            } for d in datasets_page],
+            'datasets': datasets_list,
             'total': paginator.count,
             'pages': paginator.num_pages,
             'current_page': page
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def get_dataset(request, dataset_id):
     """Get a specific dataset by ID"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         dataset = Dataset.objects.get(id=dataset_id)
-        return JsonResponse({
+        
+        result = {
             'id': dataset.id,
             'name': dataset.name,
             'description': dataset.description,
@@ -87,17 +110,36 @@ def get_dataset(request, dataset_id):
             'imaging_types': dataset.imaging_types,
             'modalities': dataset.modalities,
             'created_at': dataset.created_at.isoformat() if dataset.created_at else None
-        })
+        }
+        
+        # Close connection after use
+        connection.close()
+        
+        return JsonResponse(result)
     except Dataset.DoesNotExist:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': 'Dataset not found'}, status=404)
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def get_publications(request):
     """Get all publications with optional filtering"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         dataset_name = request.GET.get('dataset_name')
         title_search = request.GET.get('title_search')
         year = request.GET.get('year')
@@ -116,38 +158,56 @@ def get_publications(request):
         paginator = Paginator(queryset, per_page)
         publications_page = paginator.get_page(page)
         
+        # Convert to list to ensure data is fetched before closing connection
+        publications_list = [{
+            'id': p.id,
+            'title': p.title,
+            'authors': p.authors,
+            'journal': p.journal,
+            'year': p.year,
+            'pmid': p.pmid,
+            'doi': p.doi,
+            'dataset_name': p.dataset_name,
+            'created_at': p.created_at.isoformat() if p.created_at else None
+        } for p in publications_page]
+        
+        # Close connection after use
+        connection.close()
+        
         return JsonResponse({
-            'publications': [{
-                'id': p.id,
-                'title': p.title,
-                'authors': p.authors,
-                'journal': p.journal,
-                'year': p.year,
-                'pmid': p.pmid,
-                'doi': p.doi,
-                'dataset_name': p.dataset_name,
-                'created_at': p.created_at.isoformat() if p.created_at else None
-            } for p in publications_page],
+            'publications': publications_list,
             'total': paginator.count,
             'pages': paginator.num_pages,
             'current_page': page
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def get_stats(request):
     """Get summary statistics"""
+    from django.db import connection, close_old_connections
+    from django.db.models import Count
+    
     try:
-        from django.db.models import Count
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
         
         total_datasets = Dataset.objects.count()
         total_publications = Publication.objects.count()
         
-        disease_stats = Dataset.objects.values('disease_type').annotate(
+        disease_stats = list(Dataset.objects.values('disease_type').annotate(
             count=Count('id')
-        ).filter(disease_type__isnull=False)
+        ).filter(disease_type__isnull=False))
+        
+        # Close connection after use
+        connection.close()
         
         return JsonResponse({
             'total_datasets': total_datasets,
@@ -158,14 +218,24 @@ def get_stats(request):
             ]
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def get_filters(request):
     """Get available filter options"""
+    from django.db import connection, close_old_connections
+    
     try:
-        disease_types = Dataset.objects.values_list('disease_type', flat=True).distinct()
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
+        disease_types = list(Dataset.objects.values_list('disease_type', flat=True).distinct())
         disease_types = [d for d in disease_types if d]
         
         modalities = [
@@ -174,18 +244,31 @@ def get_filters(request):
             "Proteomics", "Metabolomics", "EHR", "Clinical Cognitive Tests"
         ]
         
+        # Close connection after use
+        connection.close()
+        
         return JsonResponse({
             'disease_types': sorted(disease_types),
             'modalities': sorted(modalities)
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def search_datasets(request):
     """Advanced search for datasets"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         query = request.GET.get('q', '')
         disease_type = request.GET.get('disease_type')
         modality = request.GET.get('modality')
@@ -213,31 +296,46 @@ def search_datasets(request):
         if wgs_available:
             search_query = search_query.filter(wgs_available__icontains=wgs_available)
         
-        datasets = search_query.all()
+        datasets = list(search_query.all())
+        
+        datasets_list = [{
+            'id': d.id,
+            'name': d.name,
+            'description': d.description,
+            'disease_type': d.disease_type,
+            'sample_size': d.sample_size,
+            'data_accessibility': d.data_accessibility,
+            'wgs_available': d.wgs_available,
+            'imaging_types': d.imaging_types,
+            'modalities': d.modalities,
+            'created_at': d.created_at.isoformat() if d.created_at else None
+        } for d in datasets]
+        
+        # Close connection after use
+        connection.close()
         
         return JsonResponse({
-            'datasets': [{
-                'id': d.id,
-                'name': d.name,
-                'description': d.description,
-                'disease_type': d.disease_type,
-                'sample_size': d.sample_size,
-                'data_accessibility': d.data_accessibility,
-                'wgs_available': d.wgs_available,
-                'imaging_types': d.imaging_types,
-                'modalities': d.modalities,
-                'created_at': d.created_at.isoformat() if d.created_at else None
-            } for d in datasets],
-            'total': len(datasets)
+            'datasets': datasets_list,
+            'total': len(datasets_list)
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def search_publications(request):
     """Advanced search for publications"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         query = request.GET.get('q', '')
         dataset_name = request.GET.get('dataset_name')
         journal = request.GET.get('journal')
@@ -262,31 +360,46 @@ def search_publications(request):
         if author:
             search_query = search_query.filter(authors__icontains=author)
         
-        publications = search_query.all()
+        publications = list(search_query.all())
+        
+        publications_list = [{
+            'id': p.id,
+            'title': p.title,
+            'authors': p.authors,
+            'journal': p.journal,
+            'year': p.year,
+            'pmid': p.pmid,
+            'doi': p.doi,
+            'dataset_name': p.dataset_name,
+            'created_at': p.created_at.isoformat() if p.created_at else None
+        } for p in publications]
+        
+        # Close connection after use
+        connection.close()
         
         return JsonResponse({
-            'publications': [{
-                'id': p.id,
-                'title': p.title,
-                'authors': p.authors,
-                'journal': p.journal,
-                'year': p.year,
-                'pmid': p.pmid,
-                'doi': p.doi,
-                'dataset_name': p.dataset_name,
-                'created_at': p.created_at.isoformat() if p.created_at else None
-            } for p in publications],
-            'total': len(publications)
+            'publications': publications_list,
+            'total': len(publications_list)
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def export_datasets(request):
     """Export datasets to CSV"""
+    from django.db import connection, close_old_connections
+    
     try:
-        datasets = Dataset.objects.all()
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
+        datasets = list(Dataset.objects.all())
         
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="adrd_datasets.csv"'
@@ -305,16 +418,29 @@ def export_datasets(request):
                 d.modalities, d.created_at.isoformat() if d.created_at else None
             ])
         
+        # Close connection after use
+        connection.close()
+        
         return response
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def export_publications(request):
     """Export publications to CSV"""
+    from django.db import connection, close_old_connections
+    
     try:
-        publications = Publication.objects.all()
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
+        publications = list(Publication.objects.all())
         
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="adrd_publications.csv"'
@@ -331,17 +457,43 @@ def export_publications(request):
                 p.pmid, p.doi, p.dataset_name, p.created_at.isoformat() if p.created_at else None
             ])
         
+        # Close connection after use
+        connection.close()
+        
         return response
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def get_dataset_publications(request, dataset_id):
     """Get publications for a specific dataset"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         dataset = Dataset.objects.get(id=dataset_id)
-        publications = Publication.objects.filter(dataset_name=dataset.name)
+        publications = list(Publication.objects.filter(dataset_name=dataset.name))
+        
+        publications_list = [{
+            'id': p.id,
+            'title': p.title,
+            'authors': p.authors,
+            'journal': p.journal,
+            'year': p.year,
+            'pmid': p.pmid,
+            'doi': p.doi
+        } for p in publications]
+        
+        # Close connection after use
+        connection.close()
         
         return JsonResponse({
             'dataset': {
@@ -349,50 +501,58 @@ def get_dataset_publications(request, dataset_id):
                 'name': dataset.name,
                 'description': dataset.description
             },
-            'publications': [{
-                'id': p.id,
-                'title': p.title,
-                'authors': p.authors,
-                'journal': p.journal,
-                'year': p.year,
-                'pmid': p.pmid,
-                'doi': p.doi
-            } for p in publications],
-            'total': len(publications)
+            'publications': publications_list,
+            'total': len(publications_list)
         })
     except Dataset.DoesNotExist:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': 'Dataset not found'}, status=404)
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def get_analytics_overview(request):
     """Get comprehensive analytics overview"""
+    from django.db import connection, close_old_connections
+    from django.db.models import Count
+    
     try:
-        from django.db.models import Count
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
         
         total_datasets = Dataset.objects.count()
         total_publications = Publication.objects.count()
         
-        disease_stats = Dataset.objects.values('disease_type').annotate(
+        disease_stats = list(Dataset.objects.values('disease_type').annotate(
             count=Count('id')
-        ).filter(disease_type__isnull=False)
+        ).filter(disease_type__isnull=False))
         
-        sample_sizes = Dataset.objects.filter(sample_size__isnull=False).values_list('sample_size', flat=True)
+        sample_sizes = list(Dataset.objects.filter(sample_size__isnull=False).values_list('sample_size', flat=True))
         sample_sizes = [s for s in sample_sizes if s]
         
-        year_stats = Publication.objects.values('year').annotate(
+        year_stats = list(Publication.objects.values('year').annotate(
             count=Count('id')
-        ).filter(year__isnull=False).order_by('-year')
+        ).filter(year__isnull=False).order_by('-year'))
         
-        access_stats = Dataset.objects.values('data_accessibility').annotate(
+        access_stats = list(Dataset.objects.values('data_accessibility').annotate(
             count=Count('id')
-        ).filter(data_accessibility__isnull=False)
+        ).filter(data_accessibility__isnull=False))
         
-        wgs_stats = Dataset.objects.values('wgs_available').annotate(
+        wgs_stats = list(Dataset.objects.values('wgs_available').annotate(
             count=Count('id')
-        ).filter(wgs_available__isnull=False)
+        ).filter(wgs_available__isnull=False))
+        
+        # Close connection after use
+        connection.close()
         
         return JsonResponse({
             'overview': {
@@ -420,49 +580,83 @@ def get_analytics_overview(request):
             ]
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def get_recent_datasets(request):
     """Get recently added datasets"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         limit = int(request.GET.get('limit', 5))
-        datasets = Dataset.objects.order_by('-created_at')[:limit]
+        datasets = list(Dataset.objects.order_by('-created_at')[:limit])
+        
+        datasets_list = [{
+            'id': d.id,
+            'name': d.name,
+            'description': d.description,
+            'disease_type': d.disease_type,
+            'sample_size': d.sample_size,
+            'created_at': d.created_at.isoformat() if d.created_at else None
+        } for d in datasets]
+        
+        # Close connection after use
+        connection.close()
         
         return JsonResponse({
-            'datasets': [{
-                'id': d.id,
-                'name': d.name,
-                'description': d.description,
-                'disease_type': d.disease_type,
-                'sample_size': d.sample_size,
-                'created_at': d.created_at.isoformat() if d.created_at else None
-            } for d in datasets]
+            'datasets': datasets_list
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(["GET"])
 def get_recent_publications(request):
     """Get recently added publications"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         limit = int(request.GET.get('limit', 5))
-        publications = Publication.objects.order_by('-created_at')[:limit]
+        publications = list(Publication.objects.order_by('-created_at')[:limit])
+        
+        publications_list = [{
+            'id': p.id,
+            'title': p.title,
+            'authors': p.authors,
+            'journal': p.journal,
+            'year': p.year,
+            'dataset_name': p.dataset_name,
+            'created_at': p.created_at.isoformat() if p.created_at else None
+        } for p in publications]
+        
+        # Close connection after use
+        connection.close()
         
         return JsonResponse({
-            'publications': [{
-                'id': p.id,
-                'title': p.title,
-                'authors': p.authors,
-                'journal': p.journal,
-                'year': p.year,
-                'dataset_name': p.dataset_name,
-                'created_at': p.created_at.isoformat() if p.created_at else None
-            } for p in publications]
+            'publications': publications_list
         })
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
