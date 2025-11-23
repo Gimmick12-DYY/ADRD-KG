@@ -899,9 +899,17 @@ def approve_upload(request, upload_id):
             file_data = json.loads(upload.file_content)
         except Exception as e:
             print(f"Error parsing file_content: {e}")
+            try:
+                connection.close()
+            except:
+                pass
             return JsonResponse({'error': f'Invalid file content format: {str(e)}'}, status=400)
         
         if not isinstance(file_data, list) or len(file_data) == 0:
+            try:
+                connection.close()
+            except:
+                pass
             return JsonResponse({'error': 'No data found in file'}, status=400)
         
         # Log the actual column names in the file for debugging
@@ -1012,16 +1020,23 @@ def approve_upload(request, upload_id):
         upload.reviewed_at = timezone.now()
         upload.save(update_fields=['status', 'review_notes', 'reviewed_by', 'reviewed_at'])
         
+        # Force commit by ensuring transaction is committed
+        from django.db import transaction
+        transaction.commit()
+        
         # Force commit by refreshing from database
         upload.refresh_from_db()
         print(f"Upload {upload.id} status updated to: {upload.status} (verified)")
         
-        # Verify the status was actually saved
-        verify_upload = PendingUpload.objects.get(id=upload.id)
-        if verify_upload.status != 'approved':
-            print(f"WARNING: Upload {upload.id} status is {verify_upload.status}, expected 'approved'")
-        else:
-            print(f"✓ Upload {upload.id} status confirmed as 'approved'")
+        # Verify the status was actually saved (before closing connection)
+        try:
+            verify_upload = PendingUpload.objects.get(id=upload.id)
+            if verify_upload.status != 'approved':
+                print(f"WARNING: Upload {upload.id} status is {verify_upload.status}, expected 'approved'")
+            else:
+                print(f"✓ Upload {upload.id} status confirmed as 'approved'")
+        except Exception as verify_error:
+            print(f"Error verifying upload status: {verify_error}")
         
         # Close connection after use
         connection.close()
@@ -1049,10 +1064,15 @@ def approve_upload(request, upload_id):
             connection.close()
         except:
             pass
-        print(f"Error in approve_upload: {e}")
+        error_msg = str(e)
+        print(f"Error in approve_upload: {error_msg}")
         import traceback
         traceback.print_exc()
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({
+            'success': False,
+            'error': error_msg,
+            'message': f'Failed to approve upload: {error_msg}'
+        }, status=500)
 
 
 @csrf_exempt
