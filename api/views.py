@@ -518,19 +518,45 @@ def check_auth(request):
 @require_http_methods(["GET"])
 def get_pending_uploads(request):
     """Get all pending uploads (or all uploads if status='all')"""
+    from django.db import connection, close_old_connections
+    from models import PendingUpload
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        
+        # Ensure database is initialized
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_pendingupload';")
+                table_exists = cursor.fetchone()
+            if not table_exists:
+                print("Table api_pendingupload doesn't exist, initializing...")
+                with connection.schema_editor() as schema_editor:
+                    schema_editor.create_model(PendingUpload)
+                print("Table api_pendingupload created")
+        except Exception as init_error:
+            print(f"Database init check error (non-fatal): {init_error}")
+            import traceback
+            traceback.print_exc()
+        
         status = request.GET.get('status', 'pending')
+        
+        # Ensure connection is open
+        connection.ensure_connection()
         
         # If status is 'all', get all uploads regardless of status
         if status == 'all':
-            pending_uploads = PendingUpload.objects.all().order_by('-created_at')
+            pending_uploads = list(PendingUpload.objects.all().order_by('-created_at'))
         else:
-            pending_uploads = PendingUpload.objects.filter(status=status).order_by('-created_at')
+            pending_uploads = list(PendingUpload.objects.filter(status=status).order_by('-created_at'))
         
         print(f"Fetching uploads with status='{status}': {len(pending_uploads)} found")
         
-        return JsonResponse({
-            'uploads': [{
+        # Convert to list to ensure we can serialize
+        uploads_list = []
+        for u in pending_uploads:
+            uploads_list.append({
                 'id': u.id,
                 'file_name': u.file_name,
                 'file_type': u.file_type,
@@ -540,22 +566,39 @@ def get_pending_uploads(request):
                 'reviewed_by': u.reviewed_by,
                 'created_at': u.created_at.isoformat() if u.created_at else None,
                 'reviewed_at': u.reviewed_at.isoformat() if u.reviewed_at else None,
-            } for u in pending_uploads],
-            'total': len(pending_uploads),
+            })
+        
+        # Close connection after use
+        connection.close()
+        
+        return JsonResponse({
+            'uploads': uploads_list,
+            'total': len(uploads_list),
             'status_filter': status
         })
     except Exception as e:
         print(f"Error in get_pending_uploads: {e}")
         import traceback
         traceback.print_exc()
-        return JsonResponse({'error': str(e)}, status=500)
+        # Ensure connection is closed even on error
+        try:
+            connection.close()
+        except:
+            pass
+        return JsonResponse({'error': str(e), 'uploads': [], 'total': 0}, status=500)
 
 
 @csrf_exempt
 @require_http_methods(["GET"])
 def get_pending_upload_detail(request, upload_id):
     """Get detailed information about a pending upload"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         upload = PendingUpload.objects.get(id=upload_id)
         
         # Parse file content
@@ -588,6 +631,9 @@ def get_pending_upload_detail(request, upload_id):
             print(f"Error parsing file_content: {e}")
             file_content = None
         
+        # Close connection after use
+        connection.close()
+        
         return JsonResponse({
             'id': upload.id,
             'file_name': upload.file_name,
@@ -601,8 +647,16 @@ def get_pending_upload_detail(request, upload_id):
             'reviewed_at': upload.reviewed_at.isoformat() if upload.reviewed_at else None,
         })
     except PendingUpload.DoesNotExist:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': 'Upload not found'}, status=404)
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         print(f"Error in get_pending_upload_detail: {e}")
         import traceback
         traceback.print_exc()
@@ -613,7 +667,13 @@ def get_pending_upload_detail(request, upload_id):
 @require_http_methods(["POST"])
 def approve_upload(request, upload_id):
     """Approve a pending upload and add to database"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         body = request.body.decode('utf-8') if isinstance(request.body, bytes) else request.body
         data = json.loads(body)
         review_notes = data.get('review_notes', '')
@@ -740,6 +800,9 @@ def approve_upload(request, upload_id):
         upload.save(update_fields=['status', 'review_notes', 'reviewed_by', 'reviewed_at'])
         print(f"Upload {upload.id} status updated to: {upload.status}")
         
+        # Close connection after use
+        connection.close()
+        
         # Return result with counts
         message = f'Successfully added {added_count} dataset(s) to the database.'
         if error_count > 0:
@@ -753,8 +816,16 @@ def approve_upload(request, upload_id):
             'errors': errors[:10] if errors else []  # Return first 10 errors
         })
     except PendingUpload.DoesNotExist:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': 'Upload not found'}, status=404)
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         print(f"Error in approve_upload: {e}")
         import traceback
         traceback.print_exc()
@@ -765,7 +836,13 @@ def approve_upload(request, upload_id):
 @require_http_methods(["POST"])
 def reject_upload(request, upload_id):
     """Reject a pending upload"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         body = request.body.decode('utf-8') if isinstance(request.body, bytes) else request.body
         data = json.loads(body)
         review_notes = data.get('review_notes', '')
@@ -779,13 +856,24 @@ def reject_upload(request, upload_id):
         upload.save(update_fields=['status', 'review_notes', 'reviewed_by', 'reviewed_at'])
         print(f"Upload {upload.id} status updated to: {upload.status}")
         
+        # Close connection after use
+        connection.close()
+        
         return JsonResponse({
             'success': True,
             'message': 'Upload rejected'
         })
     except PendingUpload.DoesNotExist:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': 'Upload not found'}, status=404)
     except Exception as e:
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 
 
@@ -794,7 +882,13 @@ def reject_upload(request, upload_id):
 @require_http_methods(["POST"])
 def upload_file(request):
     """Upload a file for review"""
+    from django.db import connection, close_old_connections
+    
     try:
+        # Close any stale connections and ensure fresh connection
+        close_old_connections()
+        connection.ensure_connection()
+        
         body = request.body.decode('utf-8') if isinstance(request.body, bytes) else request.body
         data = json.loads(body)
         file_name = data.get('file_name')
@@ -880,6 +974,8 @@ def upload_file(request):
                 uploaded_by=uploaded_by,
                 status='pending'
             )
+            # Close connection after use
+            connection.close()
         except (TypeError, ValueError) as e:
             # If JSON serialization fails, try to clean the data more
             print(f"JSON serialization error: {e}")
@@ -905,11 +1001,19 @@ def upload_file(request):
                 status='pending'
             )
         
+        # Close connection after use
+        connection.close()
+        
         return JsonResponse({
             'success': True,
             'message': 'File uploaded successfully and pending review',
             'upload_id': pending_upload.id
         })
     except Exception as e:
+        # Ensure connection is closed even on error
+        try:
+            connection.close()
+        except:
+            pass
         return JsonResponse({'error': str(e)}, status=500)
 

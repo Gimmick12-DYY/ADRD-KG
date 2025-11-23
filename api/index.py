@@ -26,6 +26,10 @@ if not settings.configured:
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
                 'NAME': '/tmp/adrd_kg.db',
+                'OPTIONS': {
+                    'timeout': 20,  # Wait up to 20 seconds for database lock
+                },
+                'CONN_MAX_AGE': 0,  # Don't persist connections (important for serverless)
             }
         },
         MIDDLEWARE=[
@@ -105,19 +109,40 @@ def init_database():
         from django.db import connection
         from models import Dataset, Publication
         
-        # Check if tables exist
+        # Ensure database file exists and is accessible
+        db_path = settings.DATABASES['default']['NAME']
+        import os
+        db_dir = os.path.dirname(db_path)
+        if db_dir and not os.path.exists(db_dir):
+            os.makedirs(db_dir, exist_ok=True)
+        
+        # Check if tables exist - check for all required tables
         with connection.cursor() as cursor:
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_dataset';")
-            table_exists = cursor.fetchone()
+            dataset_table_exists = cursor.fetchone()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_pendingupload';")
+            pending_table_exists = cursor.fetchone()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_adminuser';")
+            admin_table_exists = cursor.fetchone()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_publication';")
+            pub_table_exists = cursor.fetchone()
         
-        if not table_exists:
+        if not dataset_table_exists or not pending_table_exists or not admin_table_exists or not pub_table_exists:
             print("Creating tables...")
             # Create tables manually
             with connection.schema_editor() as schema_editor:
-                schema_editor.create_model(Dataset)
-                schema_editor.create_model(Publication)
-                schema_editor.create_model(models.PendingUpload)
-                schema_editor.create_model(models.AdminUser)
+                if not dataset_table_exists:
+                    schema_editor.create_model(Dataset)
+                    print("Created api_dataset table")
+                if not pending_table_exists:
+                    schema_editor.create_model(models.PendingUpload)
+                    print("Created api_pendingupload table")
+                if not admin_table_exists:
+                    schema_editor.create_model(models.AdminUser)
+                    print("Created api_adminuser table")
+                if not pub_table_exists:
+                    schema_editor.create_model(Publication)
+                    print("Created api_publication table")
             
             # Create sample data
             datasets = [
@@ -186,11 +211,16 @@ def init_database():
             Publication.objects.bulk_create(publications)
             
             print(f"✓ Created {len(datasets)} datasets and {len(publications)} publications")
+        else:
+            print("✓ Database tables already exist")
         
         # Always ensure admin users exist (even if tables already existed)
         init_admin_users()
+        
     except Exception as e:
         print(f"DB init warning: {e}")
+        import traceback
+        traceback.print_exc()
 
 # Initialize database
 try:

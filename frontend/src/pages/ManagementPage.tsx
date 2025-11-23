@@ -83,15 +83,15 @@ const ManagementPage: React.FC = () => {
     fetchUploads();
   }, [tabValue]);
 
-  // Fetch counts for all tabs on initial load
+  // Fetch counts for all tabs on initial load and when tab changes
   useEffect(() => {
     const fetchAllCounts = async () => {
       try {
         const [pending, approved, rejected, all] = await Promise.all([
-          apiService.getPendingUploads('pending'),
-          apiService.getPendingUploads('approved'),
-          apiService.getPendingUploads('rejected'),
-          apiService.getPendingUploads('all'),
+          apiService.getPendingUploads('pending').catch(() => ({ uploads: [] })),
+          apiService.getPendingUploads('approved').catch(() => ({ uploads: [] })),
+          apiService.getPendingUploads('rejected').catch(() => ({ uploads: [] })),
+          apiService.getPendingUploads('all').catch(() => ({ uploads: [] })),
         ]);
         setUploadCounts({
           pending: pending.uploads?.length || 0,
@@ -104,7 +104,7 @@ const ManagementPage: React.FC = () => {
       }
     };
     fetchAllCounts();
-  }, []);
+  }, [tabValue]); // Re-fetch counts when tab changes
 
   const fetchUploads = async () => {
     try {
@@ -125,21 +125,32 @@ const ManagementPage: React.FC = () => {
       
       const data = await apiService.getPendingUploads(status);
       console.log(`Fetched ${status} uploads:`, data);
-      setUploads(data.uploads || []);
+      
+      // Ensure we have a valid response
+      if (!data || typeof data !== 'object') {
+        console.warn('Invalid response from API:', data);
+        setUploads([]);
+        return;
+      }
+      
+      const uploadsList = data.uploads || [];
+      setUploads(uploadsList);
       
       // Update counts when fetching
       if (status === 'pending') {
-        setUploadCounts(prev => ({ ...prev, pending: data.uploads?.length || 0 }));
+        setUploadCounts(prev => ({ ...prev, pending: uploadsList.length }));
       } else if (status === 'approved') {
-        setUploadCounts(prev => ({ ...prev, approved: data.uploads?.length || 0 }));
+        setUploadCounts(prev => ({ ...prev, approved: uploadsList.length }));
       } else if (status === 'rejected') {
-        setUploadCounts(prev => ({ ...prev, rejected: data.uploads?.length || 0 }));
+        setUploadCounts(prev => ({ ...prev, rejected: uploadsList.length }));
       } else if (status === 'all') {
-        setUploadCounts(prev => ({ ...prev, all: data.uploads?.length || 0 }));
+        setUploadCounts(prev => ({ ...prev, all: uploadsList.length }));
       }
     } catch (err: any) {
       console.error('Error fetching uploads:', err);
-      setError(err.message || 'Failed to fetch uploads');
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to fetch uploads';
+      setError(errorMessage);
+      setUploads([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
