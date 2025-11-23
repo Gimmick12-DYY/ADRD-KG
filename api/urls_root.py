@@ -53,54 +53,66 @@ api_patterns = [
 
 # Add full API patterns if views imported successfully
 if views_module:
-    api_patterns.extend([
-        path('datasets', views_module.get_datasets),
-        path('datasets/', views_module.get_datasets),
-        path('datasets/<int:dataset_id>', views_module.get_dataset),
-        path('datasets/<int:dataset_id>/', views_module.get_dataset),
-        path('datasets/search', views_module.search_datasets),
-        path('datasets/search/', views_module.search_datasets),
-        path('datasets/export', views_module.export_datasets),
-        path('datasets/export/', views_module.export_datasets),
-        path('datasets/recent', views_module.get_recent_datasets),
-        path('datasets/recent/', views_module.get_recent_datasets),
-        path('datasets/<int:dataset_id>/publications', views_module.get_dataset_publications),
-        path('datasets/<int:dataset_id>/publications/', views_module.get_dataset_publications),
-        path('publications', views_module.get_publications),
-        path('publications/', views_module.get_publications),
-        path('publications/search', views_module.search_publications),
-        path('publications/search/', views_module.search_publications),
-        path('publications/export', views_module.export_publications),
-        path('publications/export/', views_module.export_publications),
-        path('publications/recent', views_module.get_recent_publications),
-        path('publications/recent/', views_module.get_recent_publications),
-        path('stats', views_module.get_stats),
-        path('stats/', views_module.get_stats),
-        path('filters', views_module.get_filters),
-        path('filters/', views_module.get_filters),
-        path('analytics/overview', views_module.get_analytics_overview),
-        path('analytics/overview/', views_module.get_analytics_overview),
-        # Authentication
-        path('auth/login', views_module.admin_login),
-        path('auth/login/', views_module.admin_login),
-        path('auth/logout', views_module.admin_logout),
-        path('auth/logout/', views_module.admin_logout),
-        path('auth/check', views_module.check_auth),
-        path('auth/check/', views_module.check_auth),
-        # File upload
-        path('upload', views_module.upload_file),
-        path('upload/', views_module.upload_file),
-        # Management
-        path('management/pending', views_module.get_pending_uploads),
-        path('management/pending/', views_module.get_pending_uploads),
-        path('management/pending/<int:upload_id>', views_module.get_pending_upload_detail),
-        path('management/pending/<int:upload_id>/', views_module.get_pending_upload_detail),
-        path('management/pending/<int:upload_id>/approve', views_module.approve_upload),
-        path('management/pending/<int:upload_id>/approve/', views_module.approve_upload),
-        path('management/pending/<int:upload_id>/reject', views_module.reject_upload),
-        path('management/pending/<int:upload_id>/reject/', views_module.reject_upload),
-    ])
-    print(f"✓ Full API patterns loaded (including auth and management)")
+    try:
+        # Verify key functions exist
+        if hasattr(views_module, 'approve_upload') and hasattr(views_module, 'reject_upload'):
+            print(f"✓ approve_upload and reject_upload functions found")
+        else:
+            print(f"⚠ approve_upload or reject_upload not found in views_module")
+            print(f"Available functions: {[attr for attr in dir(views_module) if not attr.startswith('_')]}")
+        
+        api_patterns.extend([
+            path('datasets', views_module.get_datasets),
+            path('datasets/', views_module.get_datasets),
+            path('datasets/<int:dataset_id>', views_module.get_dataset),
+            path('datasets/<int:dataset_id>/', views_module.get_dataset),
+            path('datasets/search', views_module.search_datasets),
+            path('datasets/search/', views_module.search_datasets),
+            path('datasets/export', views_module.export_datasets),
+            path('datasets/export/', views_module.export_datasets),
+            path('datasets/recent', views_module.get_recent_datasets),
+            path('datasets/recent/', views_module.get_recent_datasets),
+            path('datasets/<int:dataset_id>/publications', views_module.get_dataset_publications),
+            path('datasets/<int:dataset_id>/publications/', views_module.get_dataset_publications),
+            path('publications', views_module.get_publications),
+            path('publications/', views_module.get_publications),
+            path('publications/search', views_module.search_publications),
+            path('publications/search/', views_module.search_publications),
+            path('publications/export', views_module.export_publications),
+            path('publications/export/', views_module.export_publications),
+            path('publications/recent', views_module.get_recent_publications),
+            path('publications/recent/', views_module.get_recent_publications),
+            path('stats', views_module.get_stats),
+            path('stats/', views_module.get_stats),
+            path('filters', views_module.get_filters),
+            path('filters/', views_module.get_filters),
+            path('analytics/overview', views_module.get_analytics_overview),
+            path('analytics/overview/', views_module.get_analytics_overview),
+            # Authentication
+            path('auth/login', views_module.admin_login),
+            path('auth/login/', views_module.admin_login),
+            path('auth/logout', views_module.admin_logout),
+            path('auth/logout/', views_module.admin_logout),
+            path('auth/check', views_module.check_auth),
+            path('auth/check/', views_module.check_auth),
+            # File upload
+            path('upload', views_module.upload_file),
+            path('upload/', views_module.upload_file),
+            # Management - More specific routes first!
+            path('management/pending/<int:upload_id>/approve', views_module.approve_upload),
+            path('management/pending/<int:upload_id>/approve/', views_module.approve_upload),
+            path('management/pending/<int:upload_id>/reject', views_module.reject_upload),
+            path('management/pending/<int:upload_id>/reject/', views_module.reject_upload),
+            path('management/pending/<int:upload_id>', views_module.get_pending_upload_detail),
+            path('management/pending/<int:upload_id>/', views_module.get_pending_upload_detail),
+            path('management/pending', views_module.get_pending_uploads),
+            path('management/pending/', views_module.get_pending_uploads),
+        ])
+        print(f"✓ Full API patterns loaded (including auth and management)")
+    except Exception as e:
+        print(f"⚠ Error adding API patterns: {e}")
+        import traceback
+        traceback.print_exc()
 else:
     print(f"⚠ Using minimal API (views import failed)")
 

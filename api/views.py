@@ -863,6 +863,8 @@ def approve_upload(request, upload_id):
     """Approve a pending upload and add to database"""
     from django.db import connection, close_old_connections
     
+    print(f"approve_upload called with upload_id={upload_id}, path={request.path}, method={request.method}")
+    
     try:
         # Close any stale connections and ensure fresh connection
         close_old_connections()
