@@ -30,7 +30,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
-ROOT_URLCONF = 'urls_root'
+ROOT_URLCONF = 'api.urls_root'
 
 # Templates - minimal configuration
 TEMPLATES = []
@@ -59,4 +59,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Disable logging configuration to avoid module errors
 LOGGING_CONFIG = None
 
-print("✓ Django settings loaded for Vercel")
+print("[OK] Django settings loaded for Vercel")

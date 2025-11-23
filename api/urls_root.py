@@ -3,6 +3,7 @@ Root URL configuration that handles both /api/* and /* paths
 """
 from django.urls import path, include
 from django.http import JsonResponse
+from importlib import import_module
 import sys
 import traceback
 
@@ -16,16 +17,16 @@ models_module = None
 import_errors = []
 
 try:
-    import models as models_module
-    print(f"✓ Models imported successfully")
+    models_module = import_module('api.models')
+    print("[OK] Models imported successfully")
 except Exception as e:
     error_msg = f"Error importing models: {str(e)}\n{traceback.format_exc()}"
     print(error_msg)
     import_errors.append(error_msg)
 
 try:
-    import views as views_module
-    print(f"✓ Views imported successfully")
+    views_module = import_module('api.views')
+    print("[OK] Views imported successfully")
 except Exception as e:
     error_msg = f"Error importing views: {str(e)}\n{traceback.format_exc()}"
     print(error_msg)
@@ -56,7 +57,7 @@ if views_module:
     try:
         # Verify key functions exist
         if hasattr(views_module, 'approve_upload') and hasattr(views_module, 'reject_upload'):
-            print(f"✓ approve_upload and reject_upload functions found")
+            print("[OK] approve_upload and reject_upload functions found")
         else:
             print(f"⚠ approve_upload or reject_upload not found in views_module")
             print(f"Available functions: {[attr for attr in dir(views_module) if not attr.startswith('_')]}")
@@ -108,7 +109,7 @@ if views_module:
             path('management/pending', views_module.get_pending_uploads),
             path('management/pending/', views_module.get_pending_uploads),
         ])
-        print(f"✓ Full API patterns loaded (including auth and management)")
+        print("[OK] Full API patterns loaded (including auth and management)")
     except Exception as e:
         print(f"⚠ Error adding API patterns: {e}")
         import traceback

@@ -5,8 +5,10 @@ import os
 import sys
 from pathlib import Path
 
-# Add api directory to Python path
-sys.path.insert(0, str(Path(__file__).parent))
+BASE_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = BASE_DIR.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 # Import Django and configure manually
 # DO NOT set DJANGO_SETTINGS_MODULE - we'll configure directly
@@ -21,6 +23,7 @@ if not settings.configured:
         ALLOWED_HOSTS=['*'],
         INSTALLED_APPS=[
             'django.contrib.contenttypes',
+            'api',
         ],
         DATABASES={
             'default': {
@@ -35,7 +38,7 @@ if not settings.configured:
         MIDDLEWARE=[
             'django.middleware.common.CommonMiddleware',
         ],
-        ROOT_URLCONF='urls_root',
+        ROOT_URLCONF='api.urls_root',
         USE_TZ=True,
         DEFAULT_AUTO_FIELD='django.db.models.BigAutoField',
         # Add logging to see actual errors
@@ -52,41 +55,11 @@ if not settings.configured:
 if not apps.ready:
     apps.populate(settings.INSTALLED_APPS)
 
-# Manually register our models with Django
-try:
-    import models
-    from django.apps.registry import Apps
-    from django.apps.config import AppConfig
-    
-    # Create a simple app config
-    class ApiAppConfig(AppConfig):
-        name = 'api'
-        label = 'api'
-        verbose_name = 'API'
-    
-    # Register the app if not already registered
-    if not apps.is_installed('api'):
-        api_config = ApiAppConfig('api', models)
-        api_config.apps = apps  # ensure AppConfig can resolve registry lookups
-        api_config.models_module = models
-        apps.all_models['api'] = {}
-        apps.app_configs['api'] = api_config
-        
-        # Register models
-        apps.all_models['api']['dataset'] = models.Dataset
-        apps.all_models['api']['publication'] = models.Publication
-        apps.all_models['api']['pendingupload'] = models.PendingUpload
-        apps.all_models['api']['adminuser'] = models.AdminUser
-        
-        print("✓ Models registered with Django")
-except Exception as e:
-    print(f"Warning: Could not register models: {e}")
-
 # Initialize admin users
 def init_admin_users():
     """Ensure initial admin users exist"""
     try:
-        from models import AdminUser
+        from api.models import AdminUser
         
         admin_users = [
             {'username': 'Yuyang', 'password': 'Big-s2'},
@@ -99,7 +72,7 @@ def init_admin_users():
                     username=admin_data['username'],
                     password_hash=AdminUser.hash_password(admin_data['password'])
                 )
-                print(f"✓ Created admin user: {admin_data['username']}")
+                print(f"[OK] Created admin user: {admin_data['username']}")
     except Exception as e:
         print(f"Admin user init warning: {e}")
 
@@ -107,9 +80,8 @@ def init_admin_users():
 def init_database():
     """Initialize database with tables and sample data"""
     try:
-        from django.core.management import execute_from_command_line
         from django.db import connection
-        from models import Dataset, Publication
+        from api.models import Dataset, Publication, PendingUpload, AdminUser as AdminUserModel
         
         # Ensure database file exists and is accessible
         db_path = settings.DATABASES['default']['NAME']
@@ -142,10 +114,10 @@ def init_database():
                     schema_editor.create_model(Dataset)
                     print("Created api_dataset table")
                 if not pending_table_exists:
-                    schema_editor.create_model(models.PendingUpload)
+                    schema_editor.create_model(PendingUpload)
                     print("Created api_pendingupload table")
                 if not admin_table_exists:
-                    schema_editor.create_model(models.AdminUser)
+                    schema_editor.create_model(AdminUserModel)
                     print("Created api_adminuser table")
                 if not pub_table_exists:
                     schema_editor.create_model(Publication)
@@ -230,18 +202,18 @@ def init_database():
                 ]
                 Publication.objects.bulk_create(publications)
                 
-                print(f"✓ Created {len(datasets)} datasets and {len(publications)} publications")
+                print(f"[OK] Created {len(datasets)} datasets and {len(publications)} publications")
             else:
-                print(f"✓ Database already has data ({existing_datasets_count} datasets, {existing_publications_count} publications), skipping sample data creation")
+                print(f"[OK] Database already has data ({existing_datasets_count} datasets, {existing_publications_count} publications), skipping sample data creation")
         else:
             # Tables exist, check if we need to ensure admin users exist
             try:
                 existing_datasets_count = Dataset.objects.count()
                 existing_publications_count = Publication.objects.count()
-                print(f"✓ Database tables already exist ({existing_datasets_count} datasets, {existing_publications_count} publications)")
+                print(f"[OK] Database tables already exist ({existing_datasets_count} datasets, {existing_publications_count} publications)")
             except Exception as e:
                 print(f"Error counting existing data: {e}")
-                print("✓ Database tables already exist")
+                print("[OK] Database tables already exist")
         
         # Always ensure admin users exist (even if tables already existed)
         init_admin_users()

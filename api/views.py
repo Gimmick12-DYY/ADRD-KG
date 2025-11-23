@@ -12,7 +12,7 @@ import json
 import base64
 import pandas as pd
 import io
-import models
+from . import models
 Dataset = models.Dataset
 Publication = models.Publication
 PendingUpload = models.PendingUpload
@@ -713,7 +713,7 @@ def check_auth(request):
 def get_pending_uploads(request):
     """Get all pending uploads (or all uploads if status='all')"""
     from django.db import connection, close_old_connections
-    from models import PendingUpload
+    from .models import PendingUpload
     
     try:
         # Close any stale connections and ensure fresh connection
@@ -1034,7 +1034,7 @@ def approve_upload(request, upload_id):
             if verify_upload.status != 'approved':
                 print(f"WARNING: Upload {upload.id} status is {verify_upload.status}, expected 'approved'")
             else:
-                print(f"✓ Upload {upload.id} status confirmed as 'approved'")
+                print(f"[OK] Upload {upload.id} status confirmed as 'approved'")
         except Exception as verify_error:
             print(f"Error verifying upload status: {verify_error}")
         
@@ -1118,7 +1118,7 @@ def reject_upload(request, upload_id):
         if verify_upload.status != 'rejected':
             print(f"WARNING: Upload {upload.id} status is {verify_upload.status}, expected 'rejected'")
         else:
-            print(f"✓ Upload {upload.id} status confirmed as 'rejected'")
+            print(f"[OK] Upload {upload.id} status confirmed as 'rejected'")
         
         # Close connection after use
         connection.close()
