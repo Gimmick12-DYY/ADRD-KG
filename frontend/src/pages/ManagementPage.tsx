@@ -80,7 +80,7 @@ const ManagementPage: React.FC = () => {
   const username = authService.getUsername();
 
   useEffect(() => {
-    fetchUploads();
+    fetchUploads(true); // Force refresh when tab changes
   }, [tabValue]);
 
   // Fetch counts for all tabs on initial load and when tab changes
@@ -106,7 +106,33 @@ const ManagementPage: React.FC = () => {
     fetchAllCounts();
   }, [tabValue]); // Re-fetch counts when tab changes
 
-  const fetchUploads = async () => {
+  // Auto-refresh when page becomes visible (user switches back to tab)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('Page became visible, refreshing uploads...');
+        fetchUploads(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Also refresh on focus (user clicks back to the window)
+    const handleFocus = () => {
+      console.log('Window focused, refreshing uploads...');
+      fetchUploads(true);
+    };
+    
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabValue]); // Re-setup listeners when tab changes
+
+  const fetchUploads = async (forceRefresh: boolean = false) => {
     try {
       setLoading(true);
       setError(null);
@@ -123,8 +149,10 @@ const ManagementPage: React.FC = () => {
         status = 'pending';
       }
       
+      // Add cache-busting timestamp if force refresh
+      const timestamp = forceRefresh ? `&_t=${Date.now()}` : '';
       const data = await apiService.getPendingUploads(status);
-      console.log(`Fetched ${status} uploads:`, data);
+      console.log(`Fetched ${status} uploads:`, data, `(forceRefresh: ${forceRefresh})`);
       
       // Ensure we have a valid response
       if (!data || typeof data !== 'object') {
@@ -134,6 +162,7 @@ const ManagementPage: React.FC = () => {
       }
       
       const uploadsList = data.uploads || [];
+      console.log(`Setting ${uploadsList.length} uploads for status ${status}`);
       setUploads(uploadsList);
       
       // Update counts when fetching
@@ -249,26 +278,28 @@ const ManagementPage: React.FC = () => {
       setDetailDialogOpen(false);
       setReviewNotes('');
       
-      // Refresh uploads and counts
-      await fetchUploads();
+      // Refresh uploads and counts with force refresh
+      await fetchUploads(true);
       
-      // Also refresh all counts
-      try {
-        const [pending, approved, rejected, all] = await Promise.all([
-          apiService.getPendingUploads('pending'),
-          apiService.getPendingUploads('approved'),
-          apiService.getPendingUploads('rejected'),
-          apiService.getPendingUploads('all'),
-        ]);
-        setUploadCounts({
-          pending: pending.uploads?.length || 0,
-          approved: approved.uploads?.length || 0,
-          rejected: rejected.uploads?.length || 0,
-          all: all.uploads?.length || 0,
-        });
-      } catch (err) {
-        console.error('Error refreshing counts:', err);
-      }
+      // Also refresh all counts with a small delay to ensure database is updated
+      setTimeout(async () => {
+        try {
+          const [pending, approved, rejected, all] = await Promise.all([
+            apiService.getPendingUploads('pending'),
+            apiService.getPendingUploads('approved'),
+            apiService.getPendingUploads('rejected'),
+            apiService.getPendingUploads('all'),
+          ]);
+          setUploadCounts({
+            pending: pending.uploads?.length || 0,
+            approved: approved.uploads?.length || 0,
+            rejected: rejected.uploads?.length || 0,
+            all: all.uploads?.length || 0,
+          });
+        } catch (err) {
+          console.error('Error refreshing counts:', err);
+        }
+      }, 500);
       
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(null), 5000);
@@ -430,7 +461,7 @@ const ManagementPage: React.FC = () => {
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2, p: 2, pt: 3 }}>
             <Button
               startIcon={<Refresh />}
-              onClick={fetchUploads}
+              onClick={() => fetchUploads(true)}
               disabled={loading}
               variant="outlined"
               sx={{

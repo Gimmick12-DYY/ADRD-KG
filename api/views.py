@@ -741,9 +741,12 @@ def get_pending_uploads(request):
         
         # If status is 'all', get all uploads regardless of status
         if status == 'all':
-            pending_uploads = list(PendingUpload.objects.all().order_by('-created_at'))
+            queryset = PendingUpload.objects.all().order_by('-created_at')
         else:
-            pending_uploads = list(PendingUpload.objects.filter(status=status).order_by('-created_at'))
+            queryset = PendingUpload.objects.filter(status=status).order_by('-created_at')
+        
+        # Force evaluation by converting to list immediately (before closing connection)
+        pending_uploads = list(queryset)
         
         print(f"Fetching uploads with status='{status}': {len(pending_uploads)} found")
         
@@ -1170,6 +1173,10 @@ def upload_file(request):
                 uploaded_by=uploaded_by,
                 status='pending'
             )
+            # Force commit by accessing the ID (ensures it's saved)
+            upload_id = pending_upload.id
+            print(f"Created pending upload with ID: {upload_id}, file_name: {file_name}")
+            
             # Close connection after use
             connection.close()
         except (TypeError, ValueError) as e:
@@ -1196,6 +1203,9 @@ def upload_file(request):
                 uploaded_by=uploaded_by,
                 status='pending'
             )
+            # Force commit by accessing the ID
+            upload_id = pending_upload.id
+            print(f"Created pending upload with ID: {upload_id}, file_name: {file_name}")
         
         # Close connection after use
         connection.close()
@@ -1203,7 +1213,7 @@ def upload_file(request):
         return JsonResponse({
             'success': True,
             'message': 'File uploaded successfully and pending review',
-            'upload_id': pending_upload.id
+            'upload_id': upload_id
         })
     except Exception as e:
         # Ensure connection is closed even on error
