@@ -67,6 +67,8 @@ try:
     # Register the app if not already registered
     if not apps.is_installed('api'):
         api_config = ApiAppConfig('api', models)
+        api_config.apps = apps  # ensure AppConfig can resolve registry lookups
+        api_config.models_module = models
         apps.all_models['api'] = {}
         apps.app_configs['api'] = api_config
         
