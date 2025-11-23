@@ -149,8 +149,6 @@ const ManagementPage: React.FC = () => {
         status = 'pending';
       }
       
-      // Add cache-busting timestamp if force refresh
-      const timestamp = forceRefresh ? `&_t=${Date.now()}` : '';
       const data = await apiService.getPendingUploads(status);
       console.log(`Fetched ${status} uploads:`, data, `(forceRefresh: ${forceRefresh})`);
       
