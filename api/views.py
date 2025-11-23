@@ -739,16 +739,20 @@ def get_pending_uploads(request):
         # Ensure connection is open
         connection.ensure_connection()
         
-        # If status is 'all', get all uploads regardless of status
-        if status == 'all':
-            queryset = PendingUpload.objects.all().order_by('-created_at')
-        else:
-            queryset = PendingUpload.objects.filter(status=status).order_by('-created_at')
+        # Filter by status (removed 'all' option to simplify)
+        queryset = PendingUpload.objects.filter(status=status).order_by('-created_at')
         
         # Force evaluation by converting to list immediately (before closing connection)
         pending_uploads = list(queryset)
         
         print(f"Fetching uploads with status='{status}': {len(pending_uploads)} found")
+        if len(pending_uploads) > 0:
+            print(f"Sample upload IDs and statuses: {[(u.id, u.status) for u in pending_uploads[:5]]}")
+        
+        # Double-check: verify all returned uploads have the correct status
+        for u in pending_uploads:
+            if u.status != status:
+                print(f"ERROR: Upload {u.id} has status '{u.status}' but filter requested '{status}'")
         
         # Convert to list to ensure we can serialize
         uploads_list = []
@@ -878,7 +882,17 @@ def approve_upload(request, upload_id):
         review_notes = data.get('review_notes', '')
         reviewed_by = data.get('reviewed_by', 'admin')
         
-        upload = PendingUpload.objects.get(id=upload_id, status='pending')
+        # Get upload - don't filter by status='pending' in case it was already processed
+        try:
+            upload = PendingUpload.objects.get(id=upload_id)
+            if upload.status != 'pending':
+                print(f"WARNING: Upload {upload_id} is not pending (status: {upload.status}), but proceeding with approval")
+        except PendingUpload.DoesNotExist:
+            try:
+                connection.close()
+            except:
+                pass
+            return JsonResponse({'error': 'Upload not found'}, status=404)
         
         # Parse file content
         try:
@@ -997,7 +1011,17 @@ def approve_upload(request, upload_id):
         upload.reviewed_by = reviewed_by
         upload.reviewed_at = timezone.now()
         upload.save(update_fields=['status', 'review_notes', 'reviewed_by', 'reviewed_at'])
-        print(f"Upload {upload.id} status updated to: {upload.status}")
+        
+        # Force commit by refreshing from database
+        upload.refresh_from_db()
+        print(f"Upload {upload.id} status updated to: {upload.status} (verified)")
+        
+        # Verify the status was actually saved
+        verify_upload = PendingUpload.objects.get(id=upload.id)
+        if verify_upload.status != 'approved':
+            print(f"WARNING: Upload {upload.id} status is {verify_upload.status}, expected 'approved'")
+        else:
+            print(f"✓ Upload {upload.id} status confirmed as 'approved'")
         
         # Close connection after use
         connection.close()
@@ -1047,13 +1071,34 @@ def reject_upload(request, upload_id):
         review_notes = data.get('review_notes', '')
         reviewed_by = data.get('reviewed_by', 'admin')
         
-        upload = PendingUpload.objects.get(id=upload_id, status='pending')
+        # Get upload - don't filter by status='pending' in case it was already processed
+        try:
+            upload = PendingUpload.objects.get(id=upload_id)
+            if upload.status != 'pending':
+                print(f"WARNING: Upload {upload_id} is not pending (status: {upload.status}), but proceeding with rejection")
+        except PendingUpload.DoesNotExist:
+            try:
+                connection.close()
+            except:
+                pass
+            return JsonResponse({'error': 'Upload not found'}, status=404)
+        
         upload.status = 'rejected'
         upload.review_notes = review_notes
         upload.reviewed_by = reviewed_by
         upload.reviewed_at = timezone.now()
         upload.save(update_fields=['status', 'review_notes', 'reviewed_by', 'reviewed_at'])
-        print(f"Upload {upload.id} status updated to: {upload.status}")
+        
+        # Force commit by refreshing from database
+        upload.refresh_from_db()
+        print(f"Upload {upload.id} status updated to: {upload.status} (verified)")
+        
+        # Verify the status was actually saved
+        verify_upload = PendingUpload.objects.get(id=upload.id)
+        if verify_upload.status != 'rejected':
+            print(f"WARNING: Upload {upload.id} status is {verify_upload.status}, expected 'rejected'")
+        else:
+            print(f"✓ Upload {upload.id} status confirmed as 'rejected'")
         
         # Close connection after use
         connection.close()

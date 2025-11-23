@@ -87,17 +87,16 @@ const ManagementPage: React.FC = () => {
   useEffect(() => {
     const fetchAllCounts = async () => {
       try {
-        const [pending, approved, rejected, all] = await Promise.all([
+        const [pending, approved, rejected] = await Promise.all([
           apiService.getPendingUploads('pending').catch(() => ({ uploads: [] })),
           apiService.getPendingUploads('approved').catch(() => ({ uploads: [] })),
           apiService.getPendingUploads('rejected').catch(() => ({ uploads: [] })),
-          apiService.getPendingUploads('all').catch(() => ({ uploads: [] })),
         ]);
         setUploadCounts({
           pending: pending.uploads?.length || 0,
           approved: approved.uploads?.length || 0,
           rejected: rejected.uploads?.length || 0,
-          all: all.uploads?.length || 0,
+          all: (pending.uploads?.length || 0) + (approved.uploads?.length || 0) + (rejected.uploads?.length || 0),
         });
       } catch (err) {
         console.error('Error fetching upload counts:', err);
@@ -143,12 +142,11 @@ const ManagementPage: React.FC = () => {
         status = 'approved';
       } else if (tabValue === 2) {
         status = 'rejected';
-      } else if (tabValue === 3) {
-        status = 'all'; // Show all uploads
       } else {
         status = 'pending';
       }
       
+      console.log(`Fetching uploads for tab ${tabValue} with status: ${status}`);
       const data = await apiService.getPendingUploads(status);
       console.log(`Fetched ${status} uploads:`, data, `(forceRefresh: ${forceRefresh})`);
       
@@ -160,18 +158,16 @@ const ManagementPage: React.FC = () => {
       }
       
       const uploadsList = data.uploads || [];
-      console.log(`Setting ${uploadsList.length} uploads for status ${status}`);
+      console.log(`Setting ${uploadsList.length} uploads for status ${status}. Upload IDs:`, uploadsList.map((u: any) => `${u.id}(${u.status})`));
       setUploads(uploadsList);
       
-      // Update counts when fetching
+      // Update counts when fetching - only update the current tab's count
       if (status === 'pending') {
         setUploadCounts(prev => ({ ...prev, pending: uploadsList.length }));
       } else if (status === 'approved') {
         setUploadCounts(prev => ({ ...prev, approved: uploadsList.length }));
       } else if (status === 'rejected') {
         setUploadCounts(prev => ({ ...prev, rejected: uploadsList.length }));
-      } else if (status === 'all') {
-        setUploadCounts(prev => ({ ...prev, all: uploadsList.length }));
       }
     } catch (err: any) {
       console.error('Error fetching uploads:', err);
@@ -282,17 +278,16 @@ const ManagementPage: React.FC = () => {
       // Also refresh all counts with a small delay to ensure database is updated
       setTimeout(async () => {
         try {
-          const [pending, approved, rejected, all] = await Promise.all([
+          const [pending, approved, rejected] = await Promise.all([
             apiService.getPendingUploads('pending'),
             apiService.getPendingUploads('approved'),
             apiService.getPendingUploads('rejected'),
-            apiService.getPendingUploads('all'),
           ]);
           setUploadCounts({
             pending: pending.uploads?.length || 0,
             approved: approved.uploads?.length || 0,
             rejected: rejected.uploads?.length || 0,
-            all: all.uploads?.length || 0,
+            all: (pending.uploads?.length || 0) + (approved.uploads?.length || 0) + (rejected.uploads?.length || 0),
           });
         } catch (err) {
           console.error('Error refreshing counts:', err);
@@ -452,7 +447,6 @@ const ManagementPage: React.FC = () => {
               <Tab label={`Pending (${uploadCounts.pending})`} />
               <Tab label={`Approved (${uploadCounts.approved})`} />
               <Tab label={`Rejected (${uploadCounts.rejected})`} />
-              <Tab label={`All (${uploadCounts.all})`} />
             </Tabs>
           </Box>
 
