@@ -346,10 +346,7 @@ const ManagementPage: React.FC = () => {
               gutterBottom
               sx={{
                 fontWeight: 700,
-                background: 'linear-gradient(135deg, #7207ab 0%, #dc004e 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+                color: 'text.primary',
               }}
             >
               Management Panel
@@ -471,158 +468,169 @@ const ManagementPage: React.FC = () => {
             </Button>
           </Box>
 
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 8 }}>
-              <CircularProgress size={48} sx={{ color: 'primary.main' }} />
-            </Box>
-          ) : uploads.length === 0 ? (
-            <Box sx={{ p: 4 }}>
-              <Alert
-                severity="info"
+          <Box
+            sx={{
+              minHeight: 360,
+              px: { xs: 2, sm: 3 },
+              pb: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 6 }}>
+                <CircularProgress size={48} sx={{ color: 'primary.main' }} />
+              </Box>
+            ) : uploads.length === 0 ? (
+              <Box sx={{ py: 4 }}>
+                <Alert
+                  severity="info"
+                  sx={{
+                    borderRadius: 2,
+                    '& .MuiAlert-icon': {
+                      fontSize: 28,
+                    },
+                  }}
+                >
+                  No uploads found for this status.
+                </Alert>
+              </Box>
+            ) : (
+              <TableContainer
+                component={Paper}
+                elevation={0}
                 sx={{
-                  borderRadius: 2,
-                  '& .MuiAlert-icon': {
-                    fontSize: 28,
+                  borderRadius: 0,
+                  '& .MuiTable-root': {
+                    minWidth: 650,
                   },
                 }}
               >
-                No uploads found for this status.
-              </Alert>
-            </Box>
-          ) : (
-            <TableContainer
-              component={Paper}
-              elevation={0}
-              sx={{
-                borderRadius: 0,
-                '& .MuiTable-root': {
-                  minWidth: 650,
-                },
-              }}
-            >
-              <Table>
-                <TableHead>
-                  <TableRow
-                    sx={{
-                      background: 'linear-gradient(90deg, rgba(114, 7, 171, 0.08) 0%, rgba(220, 0, 78, 0.08) 100%)',
-                      '& .MuiTableCell-head': {
-                        fontWeight: 700,
-                        fontSize: '0.95rem',
-                        color: 'text.primary',
-                        borderBottom: '2px solid',
-                        borderColor: 'divider',
-                      },
-                    }}
-                  >
-                    <TableCell>File Name</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Uploaded By</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Created At</TableCell>
-                    <TableCell align="center">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {uploads.map((upload, index) => (
+                <Table>
+                  <TableHead>
                     <TableRow
-                      key={upload.id}
                       sx={{
-                        '&:hover': {
-                          background: 'rgba(114, 7, 171, 0.03)',
-                          transform: 'scale(1.001)',
-                          transition: 'all 0.2s ease',
-                        },
-                        '& .MuiTableCell-body': {
-                          borderBottom: index < uploads.length - 1 ? '1px solid' : 'none',
+                        background: 'linear-gradient(90deg, rgba(114, 7, 171, 0.08) 0%, rgba(220, 0, 78, 0.08) 100%)',
+                        '& .MuiTableCell-head': {
+                          fontWeight: 700,
+                          fontSize: '0.95rem',
+                          color: 'text.primary',
+                          borderBottom: '2px solid',
                           borderColor: 'divider',
                         },
                       }}
                     >
-                      <TableCell sx={{ fontWeight: 500 }}>{upload.file_name}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={upload.file_type.toUpperCase()}
-                          size="small"
-                          sx={{
-                            fontWeight: 600,
-                            borderRadius: 1,
-                            background: 'rgba(114, 7, 171, 0.1)',
-                            color: 'primary.main',
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>{upload.uploaded_by || 'Anonymous'}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={upload.status.charAt(0).toUpperCase() + upload.status.slice(1)}
-                          color={getStatusColor(upload.status) as any}
-                          size="small"
-                          sx={{
-                            fontWeight: 600,
-                            borderRadius: 1,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell sx={{ color: 'text.secondary' }}>
-                        {new Date(upload.created_at).toLocaleString()}
-                      </TableCell>
-                      <TableCell align="center">
-                        <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleViewDetail(upload.id)}
-                            color="primary"
-                            title="Preview dataset"
-                            sx={{
-                              '&:hover': {
-                                background: 'rgba(114, 7, 171, 0.1)',
-                                transform: 'scale(1.1)',
-                              },
-                              transition: 'all 0.2s ease',
-                            }}
-                          >
-                            <Preview />
-                          </IconButton>
-                          {upload.status === 'pending' && (
-                            <>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleReview(upload.id, 'approve')}
-                                color="success"
-                                sx={{
-                                  '&:hover': {
-                                    background: 'rgba(46, 125, 50, 0.1)',
-                                    transform: 'scale(1.1)',
-                                  },
-                                  transition: 'all 0.2s ease',
-                                }}
-                              >
-                                <CheckCircle />
-                              </IconButton>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleReview(upload.id, 'reject')}
-                                color="error"
-                                sx={{
-                                  '&:hover': {
-                                    background: 'rgba(211, 47, 47, 0.1)',
-                                    transform: 'scale(1.1)',
-                                  },
-                                  transition: 'all 0.2s ease',
-                                }}
-                              >
-                                <Cancel />
-                              </IconButton>
-                            </>
-                          )}
-                        </Box>
-                      </TableCell>
+                      <TableCell>File Name</TableCell>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Uploaded By</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Created At</TableCell>
+                      <TableCell align="center">Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
+                  </TableHead>
+                  <TableBody>
+                    {uploads.map((upload, index) => (
+                      <TableRow
+                        key={upload.id}
+                        sx={{
+                          '&:hover': {
+                            background: 'rgba(114, 7, 171, 0.03)',
+                            transform: 'scale(1.001)',
+                            transition: 'all 0.2s ease',
+                          },
+                          '& .MuiTableCell-body': {
+                            borderBottom: index < uploads.length - 1 ? '1px solid' : 'none',
+                            borderColor: 'divider',
+                          },
+                        }}
+                      >
+                        <TableCell sx={{ fontWeight: 500 }}>{upload.file_name}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={upload.file_type.toUpperCase()}
+                            size="small"
+                            sx={{
+                              fontWeight: 600,
+                              borderRadius: 1,
+                              background: 'rgba(114, 7, 171, 0.1)',
+                              color: 'primary.main',
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>{upload.uploaded_by || 'Anonymous'}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={upload.status.charAt(0).toUpperCase() + upload.status.slice(1)}
+                            color={getStatusColor(upload.status) as any}
+                            size="small"
+                            sx={{
+                              fontWeight: 600,
+                              borderRadius: 1,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell sx={{ color: 'text.secondary' }}>
+                          {new Date(upload.created_at).toLocaleString()}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleViewDetail(upload.id)}
+                              color="primary"
+                              title="Preview dataset"
+                              sx={{
+                                '&:hover': {
+                                  background: 'rgba(114, 7, 171, 0.1)',
+                                  transform: 'scale(1.1)',
+                                },
+                                transition: 'all 0.2s ease',
+                              }}
+                            >
+                              <Preview />
+                            </IconButton>
+                            {upload.status === 'pending' && (
+                              <>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleReview(upload.id, 'approve')}
+                                  color="success"
+                                  sx={{
+                                    '&:hover': {
+                                      background: 'rgba(46, 125, 50, 0.1)',
+                                      transform: 'scale(1.1)',
+                                    },
+                                    transition: 'all 0.2s ease',
+                                  }}
+                                >
+                                  <CheckCircle />
+                                </IconButton>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleReview(upload.id, 'reject')}
+                                  color="error"
+                                  sx={{
+                                    '&:hover': {
+                                      background: 'rgba(211, 47, 47, 0.1)',
+                                      transform: 'scale(1.1)',
+                                    },
+                                    transition: 'all 0.2s ease',
+                                  }}
+                                >
+                                  <Cancel />
+                                </IconButton>
+                              </>
+                            )}
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Box>
         </CardContent>
       </Card>
 
