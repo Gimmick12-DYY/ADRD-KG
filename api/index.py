@@ -110,16 +110,12 @@ def init_database():
         else:
             print(f"Database engine: {db_settings['ENGINE']}, name: {db_settings.get('NAME')}")
         
-        # Check if tables exist - check for all required tables
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_dataset';")
-            dataset_table_exists = cursor.fetchone()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_pendingupload';")
-            pending_table_exists = cursor.fetchone()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_adminuser';")
-            admin_table_exists = cursor.fetchone()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_publication';")
-            pub_table_exists = cursor.fetchone()
+        connection.ensure_connection()
+        existing_tables = set(connection.introspection.table_names())
+        dataset_table_exists = 'api_dataset' in existing_tables
+        pending_table_exists = 'api_pendingupload' in existing_tables
+        admin_table_exists = 'api_adminuser' in existing_tables
+        pub_table_exists = 'api_publication' in existing_tables
         
         if not dataset_table_exists or not pending_table_exists or not admin_table_exists or not pub_table_exists:
             print("Creating tables...")
