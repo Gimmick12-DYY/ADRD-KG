@@ -476,15 +476,15 @@ const ManagementPage: React.FC = () => {
               pb: 4,
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
             }}
           >
             {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 6 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 6, flexGrow: 1 }}>
                 <CircularProgress size={48} sx={{ color: 'primary.main' }} />
               </Box>
             ) : uploads.length === 0 ? (
-              <Box sx={{ py: 4 }}>
+              <Box sx={{ py: 4, minWidth: 1000 }}>
                 <Alert
                   severity="info"
                   sx={{
