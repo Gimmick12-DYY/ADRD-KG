@@ -84,7 +84,23 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
-          <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'relative' }}>
+            <Box
+              sx={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: -1,
+                opacity: 0.4,
+                backgroundImage: `
+                  radial-gradient(circle at 15% 50%, rgba(21, 101, 192, 0.08) 0%, transparent 25%),
+                  radial-gradient(circle at 85% 30%, rgba(0, 137, 123, 0.08) 0%, transparent 25%)
+                `,
+                backgroundAttachment: 'fixed',
+              }}
+            />
             <Navbar />
             <Box component="main" sx={{ flexGrow: 1, pt: 10 }}>
               <Routes>

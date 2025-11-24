@@ -470,6 +470,7 @@ const ManagementPage: React.FC = () => {
 
           <Box
             sx={{
+              overflowX: 'auto',
               minHeight: 360,
               px: { xs: 2, sm: 3 },
               pb: 4,
@@ -502,8 +503,9 @@ const ManagementPage: React.FC = () => {
                 elevation={0}
                 sx={{
                   borderRadius: 0,
+                  minWidth: 1000,
                   '& .MuiTable-root': {
-                    minWidth: 650,
+                    minWidth: 1000,
                   },
                 }}
               >
