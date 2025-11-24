@@ -17,14 +17,64 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#7207abff',
+      main: '#1565c0', // Scientific Blue
+      light: '#5e92f3',
+      dark: '#003c8f',
+      contrastText: '#ffffff',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#00897b', // Teal
+      light: '#4ebaaa',
+      dark: '#005b4f',
+      contrastText: '#ffffff',
+    },
+    background: {
+      default: '#f4f6f8',
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#1a2027',
+      secondary: '#5f7181',
+    },
+  },
+  shape: {
+    borderRadius: 12,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 600,
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.05)',
+          borderRadius: 16,
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h1: { fontWeight: 700 },
+    h2: { fontWeight: 700 },
+    h3: { fontWeight: 700 },
+    h4: { fontWeight: 700 },
+    h5: { fontWeight: 600 },
+    h6: { fontWeight: 600 },
   },
 });
 

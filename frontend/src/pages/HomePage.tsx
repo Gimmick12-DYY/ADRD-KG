@@ -10,16 +10,23 @@ import {
   Alert,
   CircularProgress,
   Button,
+  Paper,
+  useTheme,
 } from '@mui/material';
 import {
   Storage,
   Article,
   TrendingUp,
   Download,
+  ArrowForward,
+  Science,
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { apiService, type Dataset, type Publication } from '../services/api';
 
 const HomePage: React.FC = () => {
+  const theme = useTheme();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<any>(null);
@@ -78,18 +85,16 @@ const HomePage: React.FC = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg">
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
-          <CircularProgress />
-        </Box>
-      </Container>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+        <CircularProgress size={60} thickness={4} />
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Container maxWidth="lg">
-        <Alert severity="error" sx={{ mt: 2 }}>
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert severity="error" variant="filled" sx={{ borderRadius: 2 }}>
           {error}
         </Alert>
       </Container>
@@ -97,163 +102,266 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom align="center">
-          Welcome to ADRD-KG
-        </Typography>
-        <Typography variant="h6" color="text.secondary" align="center" paragraph>
-          Exploring Alzheimer's Disease and Related Dementias Research Datasets
-        </Typography>
-      </Box>
-
-      {/* Statistics Cards */}
-      <Grid container spacing={3} maxWidth='lg'>
-        <Grid size={{xs: 12, sm:6, md:3}}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <Storage color="primary" sx={{ mr: 2 }} />
-                <Box>
-                  <Typography variant="h4" component="div">
-                    {stats?.total_datasets || 0}
-                  </Typography>
-                  <Typography color="text.secondary">
-                    Datasets
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+    <Box>
+      {/* Hero Section */}
+      <Paper 
+        elevation={0}
+        sx={{ 
+          position: 'relative',
+          bgcolor: 'primary.main',
+          color: 'white',
+          py: { xs: 6, md: 10 },
+          mb: 6,
+          borderRadius: 0,
+          overflow: 'hidden',
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+        }}
+      >
+        {/* Abstract Background Pattern */}
+        <Box 
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: 0.1,
+            backgroundImage: 'radial-gradient(circle at 20% 150%, white 0%, transparent 50%), radial-gradient(circle at 80% -50%, white 0%, transparent 50%)',
+          }}
+        />
         
-        <Grid size={{xs: 12, sm:6, md:3}}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <Article color="secondary" sx={{ mr: 2 }} />
-                <Box>
-                  <Typography variant="h4" component="div">
-                    {stats?.total_publications || 0}
-                  </Typography>
-                  <Typography color="text.secondary">
-                    Publications
-                  </Typography>
-                </Box>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={8}>
+              <Typography variant="overline" sx={{ fontWeight: 600, letterSpacing: 2, color: 'rgba(255,255,255,0.8)' }}>
+                ALZHEIMER'S DISEASE RESEARCH
+              </Typography>
+              <Typography variant="h2" component="h1" sx={{ fontWeight: 800, mb: 2, letterSpacing: '-1px' }}>
+                ADRD Knowledge Graph
+              </Typography>
+              <Typography variant="h5" sx={{ mb: 4, color: 'rgba(255,255,255,0.9)', fontWeight: 400, maxWidth: 600 }}>
+                A comprehensive atlas for exploring, sharing, and analyzing research datasets and publications related to Alzheimer's Disease and Related Dementias.
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                <Button 
+                  variant="contained" 
+                  color="secondary" 
+                  size="large"
+                  startIcon={<Storage />}
+                  onClick={() => navigate('/datasets')}
+                  sx={{ px: 4, py: 1.5, fontSize: '1rem' }}
+                >
+                  Browse Datasets
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  sx={{ 
+                    color: 'white', 
+                    borderColor: 'rgba(255,255,255,0.5)',
+                    px: 4, 
+                    py: 1.5,
+                    fontSize: '1rem',
+                    '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' }
+                  }}
+                  startIcon={<Science />}
+                  onClick={() => navigate('/publications')}
+                >
+                  View Publications
+                </Button>
               </Box>
-            </CardContent>
-          </Card>
+            </Grid>
+            <Grid item xs={12} md={4} sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'center' }}>
+               <Science sx={{ fontSize: 200, opacity: 0.2, color: 'white' }} />
+            </Grid>
+          </Grid>
+        </Container>
+      </Paper>
+
+      <Container maxWidth="lg" sx={{ mb: 8 }}>
+        {/* Statistics Cards */}
+        <Grid container spacing={3} mb={6}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
+              <Box sx={{ 
+                position: 'absolute', 
+                top: 0, 
+                right: 0, 
+                p: 2, 
+                opacity: 0.1, 
+                transform: 'translate(20%, -20%)' 
+              }}>
+                <Storage sx={{ fontSize: 100, color: 'primary.main' }} />
+              </Box>
+              <CardContent>
+                <Typography color="text.secondary" gutterBottom fontWeight={600}>
+                  DATASETS
+                </Typography>
+                <Typography variant="h3" component="div" color="primary.main" fontWeight={700}>
+                  {stats?.total_datasets || 0}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  Curated research datasets
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
+              <Box sx={{ 
+                position: 'absolute', 
+                top: 0, 
+                right: 0, 
+                p: 2, 
+                opacity: 0.1, 
+                transform: 'translate(20%, -20%)' 
+              }}>
+                <Article sx={{ fontSize: 100, color: 'secondary.main' }} />
+              </Box>
+              <CardContent>
+                <Typography color="text.secondary" gutterBottom fontWeight={600}>
+                  PUBLICATIONS
+                </Typography>
+                <Typography variant="h3" component="div" color="secondary.main" fontWeight={700}>
+                  {stats?.total_publications || 0}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  Indexed peer-reviewed papers
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
+              <Box sx={{ 
+                position: 'absolute', 
+                top: 0, 
+                right: 0, 
+                p: 2, 
+                opacity: 0.1, 
+                transform: 'translate(20%, -20%)' 
+              }}>
+                <TrendingUp sx={{ fontSize: 100, color: 'success.main' }} />
+              </Box>
+              <CardContent>
+                <Typography color="text.secondary" gutterBottom fontWeight={600}>
+                  DISEASE TYPES
+                </Typography>
+                <Typography variant="h3" component="div" color="success.main" fontWeight={700}>
+                  {stats?.disease_distribution?.length || 0}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  Distinct pathologies covered
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', bgcolor: 'primary.main', color: 'white' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <Download sx={{ fontSize: 40, mb: 2, opacity: 0.9 }} />
+                <Typography variant="h6" gutterBottom>
+                  Download Data
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 2, opacity: 0.8 }}>
+                  Get the full catalog in CSV format
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  onClick={() => handleExport('datasets')}
+                  startIcon={<Download />}
+                >
+                  Export CSV
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
 
-        <Grid size={{xs: 12, sm:6, md:3}}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <TrendingUp color="success" sx={{ mr: 2 }} />
-                <Box>
-                  <Typography variant="h4" component="div">
-                    {stats?.disease_distribution?.length || 0}
-                  </Typography>
-                  <Typography color="text.secondary">
-                    Disease Types
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={{xs: 12, sm:6, md:3}}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <Download color="info" sx={{ mr: 2 }} />
-                <Box>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => handleExport('datasets')}
-                    sx={{ mb: 1 }}
-                  >
-                    Export Data
-                  </Button>
-                  <Typography variant="body2" color="text.secondary">
-                    CSV Download
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Recent Data */}
-      <Grid container spacing={3} sx={{ mt: 4 }}>
-        <Grid size={{xs: 12, md: 6}}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+        {/* Recent Data Sections */}
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h5" fontWeight={700} color="text.primary">
                 Recent Datasets
               </Typography>
+              <Button endIcon={<ArrowForward />} onClick={() => navigate('/datasets')}>
+                View All
+              </Button>
+            </Box>
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {recentDatasets.length > 0 ? (
                 recentDatasets.map((dataset) => (
-                  <Box key={dataset.id} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {dataset.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      {dataset.description}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      {dataset.disease_type && (
-                        <Chip label={dataset.disease_type} size="small" color="primary" />
-                      )}
-                      {dataset.sample_size && (
-                        <Chip label={`n=${dataset.sample_size}`} size="small" variant="outlined" />
-                      )}
-                    </Box>
-                  </Box>
+                  <Card key={dataset.id} sx={{ transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
+                    <CardContent>
+                      <Typography variant="subtitle1" fontWeight="bold" color="primary.main" gutterBottom>
+                        {dataset.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {dataset.description}
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        {dataset.disease_type && (
+                          <Chip label={dataset.disease_type} size="small" sx={{ bgcolor: 'rgba(21, 101, 192, 0.1)', color: 'primary.main', fontWeight: 600 }} />
+                        )}
+                        {dataset.sample_size && (
+                          <Chip label={`n=${dataset.sample_size}`} size="small" variant="outlined" />
+                        )}
+                      </Box>
+                    </CardContent>
+                  </Card>
                 ))
               ) : (
-                <Typography color="text.secondary">No datasets available</Typography>
+                <Alert severity="info">No recent datasets available.</Alert>
               )}
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </Grid>
 
-        <Grid size={{xs: 12, md: 6}}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+          <Grid item xs={12} md={6}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h5" fontWeight={700} color="text.primary">
                 Recent Publications
               </Typography>
+              <Button endIcon={<ArrowForward />} onClick={() => navigate('/publications')}>
+                View All
+              </Button>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {recentPublications.length > 0 ? (
                 recentPublications.map((publication) => (
-                  <Box key={publication.id} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {publication.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      {publication.authors}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      {publication.journal && (
-                        <Chip label={publication.journal} size="small" color="secondary" />
-                      )}
-                      {publication.year && (
-                        <Chip label={publication.year} size="small" variant="outlined" />
-                      )}
-                    </Box>
-                  </Box>
+                  <Card key={publication.id} sx={{ transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
+                    <CardContent>
+                      <Typography variant="subtitle1" fontWeight="bold" color="text.primary" gutterBottom>
+                        {publication.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        {publication.authors}
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        {publication.journal && (
+                          <Chip label={publication.journal} size="small" color="secondary" variant="outlined" />
+                        )}
+                        {publication.year && (
+                          <Chip label={publication.year} size="small" sx={{ bgcolor: 'rgba(0, 0, 0, 0.05)' }} />
+                        )}
+                      </Box>
+                    </CardContent>
+                  </Card>
                 ))
               ) : (
-                <Typography color="text.secondary">No publications available</Typography>
+                <Alert severity="info">No recent publications available.</Alert>
               )}
-            </CardContent>
-          </Card>
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
