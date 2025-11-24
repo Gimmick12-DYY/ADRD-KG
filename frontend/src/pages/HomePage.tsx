@@ -132,7 +132,7 @@ const HomePage: React.FC = () => {
         
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={8}>
+            <Grid size={{xs: 12, md: 8}}>
               <Typography variant="overline" sx={{ fontWeight: 600, letterSpacing: 2, color: 'rgba(255,255,255,0.8)' }}>
                 ALZHEIMER'S DISEASE RESEARCH
               </Typography>
@@ -170,7 +170,7 @@ const HomePage: React.FC = () => {
                 </Button>
               </Box>
             </Grid>
-            <Grid item xs={12} md={4} sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'center' }}>
+            <Grid size={{xs: 12, md: 4}} sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'center' }}>
                <Science sx={{ fontSize: 200, opacity: 0.2, color: 'white' }} />
             </Grid>
           </Grid>
@@ -180,7 +180,7 @@ const HomePage: React.FC = () => {
       <Container maxWidth="lg" sx={{ mb: 8 }}>
         {/* Statistics Cards */}
         <Grid container spacing={3} mb={6}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs: 12, sm: 6, md: 3}}>
             <Card sx={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
               <Box sx={{ 
                 position: 'absolute', 
@@ -206,7 +206,7 @@ const HomePage: React.FC = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs: 12, sm: 6, md: 3}}>
             <Card sx={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
               <Box sx={{ 
                 position: 'absolute', 
@@ -232,7 +232,7 @@ const HomePage: React.FC = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs: 12, sm: 6, md: 3}}>
             <Card sx={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
               <Box sx={{ 
                 position: 'absolute', 
@@ -258,7 +258,7 @@ const HomePage: React.FC = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs: 12, sm: 6, md: 3}}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', bgcolor: 'primary.main', color: 'white' }}>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Download sx={{ fontSize: 40, mb: 2, opacity: 0.9 }} />
@@ -284,7 +284,7 @@ const HomePage: React.FC = () => {
 
         {/* Recent Data Sections */}
         <Grid container spacing={4}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{xs: 12, md: 6}}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h5" fontWeight={700} color="text.primary">
                 Recent Datasets
@@ -322,7 +322,7 @@ const HomePage: React.FC = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid size={{xs: 12, md: 6}}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h5" fontWeight={700} color="text.primary">
                 Recent Publications
