@@ -721,14 +721,19 @@ def get_pending_uploads(request):
         
         # Ensure database is initialized
         try:
+            table_name = PendingUpload._meta.db_table
             with connection.cursor() as cursor:
-                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='api_pendingupload';")
-                table_exists = cursor.fetchone()
+                if connection.vendor == 'sqlite':
+                    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=%s;", [table_name])
+                    table_exists = cursor.fetchone()
+                else:
+                    cursor.execute("SELECT to_regclass(%s);", [table_name])
+                    table_exists = cursor.fetchone()[0]
             if not table_exists:
-                print("Table api_pendingupload doesn't exist, initializing...")
+                print(f"Table {table_name} doesn't exist, initializing...")
                 with connection.schema_editor() as schema_editor:
                     schema_editor.create_model(PendingUpload)
-                print("Table api_pendingupload created")
+                print(f"Table {table_name} created")
         except Exception as init_error:
             print(f"Database init check error (non-fatal): {init_error}")
             import traceback
