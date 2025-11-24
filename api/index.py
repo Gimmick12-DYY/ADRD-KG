@@ -4,11 +4,32 @@ Vercel entry point - Minimal Django without django.setup()
 import os
 import sys
 from pathlib import Path
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+# Determine database settings (Neon/Postgres via DATABASE_URL or fallback to SQLite)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    default_db_config = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        ssl_require=True,
+    )
+else:
+    default_db_config = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/tmp/adrd_kg.db',
+        'OPTIONS': {
+            'timeout': 20,
+        },
+        'CONN_MAX_AGE': 0,
+    }
+
+DB_IS_SQLITE = default_db_config['ENGINE'] == 'django.db.backends.sqlite3'
 
 # Import Django and configure manually
 # DO NOT set DJANGO_SETTINGS_MODULE - we'll configure directly
@@ -26,14 +47,7 @@ if not settings.configured:
             'api',
         ],
         DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': '/tmp/adrd_kg.db',
-                'OPTIONS': {
-                    'timeout': 20,  # Wait up to 20 seconds for database lock
-                },
-                'CONN_MAX_AGE': 0,  # Don't persist connections (important for serverless)
-            }
+            'default': default_db_config,
         },
         MIDDLEWARE=[
             'django.middleware.common.CommonMiddleware',
@@ -83,17 +97,18 @@ def init_database():
         from django.db import connection
         from api.models import Dataset, Publication, PendingUpload, AdminUser as AdminUserModel
         
-        # Ensure database file exists and is accessible
-        db_path = settings.DATABASES['default']['NAME']
-        import os
-        db_dir = os.path.dirname(db_path)
-        if db_dir and not os.path.exists(db_dir):
-            os.makedirs(db_dir, exist_ok=True)
-        
-        # Log database path for debugging
-        db_exists = os.path.exists(db_path)
-        db_size = os.path.getsize(db_path) if db_exists else 0
-        print(f"Database path: {db_path}, exists: {db_exists}, size: {db_size} bytes")
+        db_settings = settings.DATABASES['default']
+        if DB_IS_SQLITE:
+            db_path = db_settings['NAME']
+            db_dir = os.path.dirname(db_path)
+            if db_dir and not os.path.exists(db_dir):
+                os.makedirs(db_dir, exist_ok=True)
+            
+            db_exists = os.path.exists(db_path)
+            db_size = os.path.getsize(db_path) if db_exists else 0
+            print(f"Database path: {db_path}, exists: {db_exists}, size: {db_size} bytes")
+        else:
+            print(f"Database engine: {db_settings['ENGINE']}, name: {db_settings.get('NAME')}")
         
         # Check if tables exist - check for all required tables
         with connection.cursor() as cursor:
